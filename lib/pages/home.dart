@@ -1,9 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'your_batch.dart'; // Import your_batch.dart at the top
 import 'timetable.dart';
 import 'attendance.dart';
+import 'faculty.dart'; // Import faculty.dart for FacultyPage
+import 'profile.dart'; // Import profile.dart for ProfilePage
+import 'exam.dart'; // Import exam.dart for ExamPage
 
 void main() {
   runApp(MyApp());
@@ -55,7 +59,28 @@ class MyApp extends StatelessWidget {
                       children: [
                         Icon(Icons.notifications_none, color: primaryColor),
                         SizedBox(width: 12),
-                        Icon(Icons.person_outline, color: primaryColor),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        SharedAxisTransition(
+                                  animation: animation,
+                                  secondaryAnimation: secondaryAnimation,
+                                  transitionType:
+                                      SharedAxisTransitionType.horizontal,
+                                  child: ProfilePage(
+                                    toggleTheme: () {},
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child:
+                              Icon(Icons.person_outline, color: primaryColor),
+                        ),
                       ],
                     ),
                   ],
@@ -93,12 +118,16 @@ class MyApp extends StatelessWidget {
                 attendanceCard(primaryColor, context),
                 SizedBox(height: 14),
 
+                // Exam Card
+                examCard(primaryColor, context),
+                SizedBox(height: 14),
+
                 // Study Materials
                 studyMaterialsCard(primaryColor),
                 SizedBox(height: 14),
 
                 // Faculty Card
-                facultyCard(primaryColor),
+                facultyCard(primaryColor, context),
                 SizedBox(height: 24),
 
                 // Quick Links
@@ -228,6 +257,8 @@ class MyApp extends StatelessWidget {
   }
 
   Widget attendanceCard(Color primaryColor, BuildContext context) {
+    double attendancePercent = 0.80; // 80% attendance
+
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
@@ -255,28 +286,154 @@ class MyApp extends StatelessWidget {
           padding: EdgeInsets.all(18),
           child: Row(
             children: [
-              Icon(Icons.person_pin_circle_rounded,
-                  size: 32, color: primaryColor),
-              SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Your Attendance',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'till yesterday',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
+              // Remove background color and increase icon size
+              Padding(
+                padding: EdgeInsets.all(4),
+                child: Image.asset(
+                  'assets/icons/user-check.png',
+                  width: 44, // Increased size
+                  height: 44, // Increased size
+                  color: primaryColor,
+                ),
               ),
+              SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Your Attendance',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      'till yesterday',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Animated Circular Attendance Graph
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: attendancePercent),
+                duration: Duration(seconds: 1),
+                builder: (context, value, child) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 42,
+                        height: 42,
+                        child: CircularProgressIndicator(
+                          value: value,
+                          strokeWidth: 5,
+                          backgroundColor: primaryColor.withOpacity(0.15),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(primaryColor),
+                        ),
+                      ),
+                      Text(
+                        '${(value * 100).toInt()}%',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              Icon(Icons.arrow_forward_ios, color: primaryColor),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget examCard(Color primaryColor, BuildContext context) {
+    // Example upcoming exam data
+    final Map<String, String> exam = {
+      'subject': 'Physics',
+      'examName': 'Mid Term Exam',
+      'dateTime': 'Fri, Sep 12 • 10:00 AM - 12:00 PM',
+    };
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 500),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.horizontal,
+              child: ExamPage(),
+            ),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        color: Colors.white,
+        elevation: 5,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Row(
+            children: [
+              Icon(Icons.assignment_turned_in, color: primaryColor, size: 32),
+              SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Upcoming Exam',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      exam['subject'] ?? '',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      exam['examName'] ?? '',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      exam['dateTime'] ?? '',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
             ],
           ),
         ),
@@ -355,119 +512,137 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Widget facultyCard(Color primaryColor) {
+  Widget facultyCard(Color primaryColor, BuildContext context) {
     final List<Map<String, String>> faculty = [
       {'name': 'Mr. Rohit Patel', 'subject': 'Physics'},
       {'name': 'Mr. Nil Patel', 'subject': 'Maths'},
       {'name': 'Mr. Vishal Jani', 'subject': 'Chemistry'},
     ];
-    return Card(
-      color: Colors.white,
-      elevation: 5,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.person, color: primaryColor, size: 32),
-                SizedBox(width: 20),
-                Text(
-                  'Your Faculty',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 500),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.horizontal,
+              child: FacultyPage(),
             ),
-            SizedBox(height: 14),
-            ...faculty.map((f) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        f['name']!,
-                        style: GoogleFonts.poppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF5F6FA),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          f['subject']!,
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(16), // ripple matches card
+      child: Card(
+        color: Colors.white,
+        elevation: 5,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.person, color: primaryColor, size: 32),
+                  SizedBox(width: 20),
+                  Text(
+                    'Your Faculty',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 14),
+              ...faculty.map((f) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          f['name']!,
                           style: GoogleFonts.poppins(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                )),
-            SizedBox(height: 4),
-            Align(
-              alignment: Alignment.bottomRight,
-              child:
-                  Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
-            ),
-          ],
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF5F6FA),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            f['subject']!,
+                            style: GoogleFonts.poppins(
+                              color: primaryColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              SizedBox(height: 4),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Icon(Icons.arrow_forward_ios,
+                    color: primaryColor, size: 18),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget quickLinksCard(Color primaryColor) {
-    final List<List<String>> links = [
-      ['Fees', 'Your Score'],
-      ['Holidays', 'Gallery'],
+    final List<String> links = [
+      'Fees',
+      'Your Score',
+      'Holidays',
+      'Gallery',
     ];
-    return Column(
-      children: links
-          .map((row) => Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: row
-                    .map((title) => Padding(
-                          padding: EdgeInsets.only(right: 20, bottom: 12),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFF5F6FA), // light gray
-                              foregroundColor: primaryColor,
-                              elevation: 3,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 28, vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text(
-                              title,
-                              style: GoogleFonts.poppins(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ))
-          .toList(),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: links
+            .map((title) => Padding(
+                  padding: EdgeInsets.only(right: 20),
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFF5F6FA), // light gray
+                      foregroundColor: primaryColor,
+                      elevation: 3,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      title,
+                      style: GoogleFonts.poppins(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ))
+            .toList(),
+      ),
     );
   }
 }
