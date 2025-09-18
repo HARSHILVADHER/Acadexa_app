@@ -16,7 +16,6 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final Color primaryColor = theme.primaryColor;
     final Color cardColor = theme.cardColor;
     final Color backgroundColor = theme.scaffoldBackgroundColor;

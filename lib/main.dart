@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'pages/login.dart';
 import 'pages/home.dart';
 import 'pages/email.dart'; // Add this import
 
@@ -35,7 +34,6 @@ class _AcadexaAppState extends State<AcadexaApp> {
       themeMode: _themeMode,
       initialRoute: '/email', // Change initial route to email.dart
       routes: {
-        '/': (context) => AcadexaLoginPage(),
         '/home': (context) => MyApp(),
         '/email': (context) => EmailLoginPage(), // Add email route
       },

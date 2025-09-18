@@ -1,7 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'your_batch.dart'; // Import your_batch.dart at the top
 import 'timetable.dart';
 import 'attendance.dart';
