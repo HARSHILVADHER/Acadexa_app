@@ -1,10 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:acadexa_app_one/services/user_service.dart';
 
-class YourBatchPage extends StatelessWidget {
-  final Color primaryColor = Color(0xFF645BD6); // Purple tone
+class YourBatchPage extends StatefulWidget {
+  @override
+  _YourBatchPageState createState() => _YourBatchPageState();
+}
+
+class _YourBatchPageState extends State<YourBatchPage> {
+  final Color primaryColor = Color(0xFF645BD6);
   final Color cardColor = Colors.white;
   final Color backgroundColor = Color(0xFFF5F6FA);
+  
+  String userName = '';
+  String greeting = '';
+  String batchName = 'Loading...';
+  int studentCount = 0;
+  String classYear = '';
+  String mentorName = '';
+  List<String> students = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  _loadUserData() async {
+    final name = await UserService.getUserName();
+    final greet = UserService.getGreeting();
+    final batch = await UserService.getBatchName();
+    final data = await UserService.getStudentCountAndYear();
+    setState(() {
+      userName = name;
+      greeting = greet;
+      batchName = batch;
+      studentCount = data['student_count'];
+      classYear = data['year'];
+      mentorName = data['mentor_name'];
+      students = List<String>.from(data['students']);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +88,7 @@ class YourBatchPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '12 EM Science',
+                          batchName,
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             color: Colors.black87,
@@ -60,7 +96,7 @@ class YourBatchPage extends StatelessWidget {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          'Batch Mentor: Mr. Rohit Patel',
+                          'Batch Mentor: ${mentorName.isNotEmpty ? mentorName : ''}',
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: primaryColor,
@@ -69,7 +105,7 @@ class YourBatchPage extends StatelessWidget {
                         ),
                         SizedBox(height: 6),
                         Text(
-                          'Total Students: 42',
+                          'Total Students: $studentCount',
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: Colors.black54,
@@ -77,7 +113,7 @@ class YourBatchPage extends StatelessWidget {
                         ),
                         SizedBox(height: 6),
                         Text(
-                          'Session: 2025-2026',
+                          'Year: $classYear',
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: Colors.black54,
@@ -188,33 +224,36 @@ class YourBatchPage extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(18),
-                  child: ListView.separated(
-                    itemCount: 5,
-                    separatorBuilder: (_, __) => Divider(),
-                    itemBuilder: (context, index) {
-                      final students = [
-                        'Harshil Vadher',
-                        'Amit Patel',
-                        'Priya Shah',
-                        'Rahul Mehta',
-                        'Sneha Joshi'
-                      ];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            students[index],
+                  child: students.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No students found',
                             style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                              fontSize: 14,
+                              color: Colors.black54,
                             ),
                           ),
-                          Icon(Icons.person_outline, color: primaryColor),
-                        ],
-                      );
-                    },
-                  ),
+                        )
+                      : ListView.separated(
+                          itemCount: students.length,
+                          separatorBuilder: (_, __) => Divider(),
+                          itemBuilder: (context, index) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  students[index],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Icon(Icons.person_outline, color: primaryColor),
+                              ],
+                            );
+                          },
+                        ),
                 ),
               ),
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
+import '../services/temp_storage.dart';
 import 'home.dart';
 
 class EmailLoginPage extends StatefulWidget {
@@ -119,6 +121,18 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           setState(() {
             isLoading = false;
           });
+          // Store email in both SharedPreferences and temp storage
+          TempStorage.setUserEmail(email);
+          if (result['student'] != null && result['student']['name'] != null) {
+            TempStorage.setUserName(result['student']['name']);
+          }
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('user_email', email);
+          } catch (e) {
+            print('SharedPreferences error: $e');
+            // Continue with temp storage if SharedPreferences fails
+          }
           // Navigate to home page
           Navigator.pushReplacement(
             context,

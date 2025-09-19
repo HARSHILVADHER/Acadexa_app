@@ -1,6 +1,8 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import '../services/user_service.dart';
 import 'your_batch.dart'; // Import your_batch.dart at the top
 import 'timetable.dart';
 import 'attendance.dart';
@@ -12,10 +14,36 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final Color primaryColor = Color(0xFF645BD6); // Purple tone
   final Color cardColor = Colors.white;
   final Color backgroundColor = Color(0xFFF5F6FA);
+  String userName = 'User';
+  String greeting = 'Hello';
+  String batchName = '12 EM Science';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  _loadUserData() async {
+    final name = await UserService.getUserName();
+    final greet = UserService.getGreeting();
+    final batch = await UserService.getBatchName();
+    print('Loaded batch name: $batch'); // Debug print
+    setState(() {
+      userName = name;
+      greeting = greet;
+      batchName = batch;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +65,7 @@ class MyApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hello , Harshil',
+                          '$greeting, $userName',
                           style: GoogleFonts.poppins(
                             color: primaryColor,
                             fontWeight: FontWeight.bold,
@@ -46,7 +74,7 @@ class MyApp extends StatelessWidget {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          'Tue, Aug 26  •  11:38 AM',
+                          DateFormat('EEE, MMM d  •  h:mm a').format(DateTime.now()),
                           style: GoogleFonts.poppins(
                             color: Colors.black54,
                             fontSize: 12,
@@ -90,7 +118,7 @@ class MyApp extends StatelessWidget {
                 customCard(
                   icon: Icons.groups,
                   title: 'Your Batch :',
-                  subtitle: '12 EM Science',
+                  subtitle: batchName,
                   iconColor: primaryColor,
                   onTap: () {
                     Navigator.of(context).push(
