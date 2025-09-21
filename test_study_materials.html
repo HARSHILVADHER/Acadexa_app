@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Study Materials API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #645BD6; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #5348c7; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; white-space: pre-wrap; }
+        select, input { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Study Materials API Test</h1>
+        
+        <div class="section">
+            <h3>1. Setup Test Data</h3>
+            <button onclick="setupTestData()">Create Table & Insert Sample Data</button>
+            <div id="setupResult" class="result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>2. Get Study Materials</h3>
+            <input type="email" id="email" placeholder="Enter email" value="student@example.com">
+            <select id="materialType">
+                <option value="">All Types</option>
+                <option value="notes">Notes</option>
+                <option value="assignment">Assignment</option>
+                <option value="presentation">Presentation</option>
+                <option value="worksheet">Worksheet</option>
+                <option value="reference">Reference Material</option>
+            </select>
+            <button onclick="getMaterials()">Get Materials</button>
+            <div id="materialsResult" class="result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>3. Download Material</h3>
+            <input type="number" id="materialId" placeholder="Material ID" value="1">
+            <input type="email" id="downloadEmail" placeholder="Enter email" value="student@example.com">
+            <button onclick="downloadMaterial()">Download Material</button>
+            <div id="downloadResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost/acadexa_app_one/api';
+        
+        async function setupTestData() {
+            try {
+                const response = await fetch(`${baseUrl}/test_study_materials.php`);
+                const result = await response.text();
+                document.getElementById('setupResult').innerHTML = result;
+            } catch (error) {
+                document.getElementById('setupResult').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        async function getMaterials() {
+            try {
+                const email = document.getElementById('email').value;
+                const type = document.getElementById('materialType').value;
+                
+                const body = { email: email };
+                if (type) body.type = type;
+                
+                const response = await fetch(`${baseUrl}/get_study_materials.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                const result = await response.json();
+                document.getElementById('materialsResult').innerHTML = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('materialsResult').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        async function downloadMaterial() {
+            try {
+                const materialId = document.getElementById('materialId').value;
+                const email = document.getElementById('downloadEmail').value;
+                
+                const response = await fetch(`${baseUrl}/download_study_material.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        material_id: parseInt(materialId),
+                        email: email
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Create download link for the file
+                    const fileData = result.file_data;
+                    const fileName = result.file_name;
+                    const fileType = result.file_type;
+                    
+                    const byteCharacters = atob(fileData);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: `application/${fileType}` });
+                    
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    
+                    document.getElementById('downloadResult').innerHTML = `File downloaded: ${fileName}`;
+                } else {
+                    document.getElementById('downloadResult').innerHTML = JSON.stringify(result, null, 2);
+                }
+            } catch (error) {
+                document.getElementById('downloadResult').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

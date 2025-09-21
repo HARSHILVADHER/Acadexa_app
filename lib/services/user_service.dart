@@ -144,4 +144,54 @@ class UserService {
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
   }
+  
+  static Future<Map<String, dynamic>?> getStudentProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('user_email') ?? TempStorage.getUserEmail();
+      
+      if (email == null) return null;
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/get_student_profile.php'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email}),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          return data['student'];
+        }
+      }
+      return null;
+    } catch (e) {
+      print('UserService getStudentProfile error: $e');
+      return null;
+    }
+  }
+  
+  static Future<bool> updateAddress(String address) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('user_email') ?? TempStorage.getUserEmail();
+      
+      if (email == null) return false;
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/update_address.php'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'address': address}),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print('UserService updateAddress error: $e');
+      return false;
+    }
+  }
 }

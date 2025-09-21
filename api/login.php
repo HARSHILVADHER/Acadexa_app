@@ -45,7 +45,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 try {
     // Fetch student record
-    $stmt = $pdo->prepare("SELECT id, name, email, password, age, grade, contact, class_code, user_id 
+    $stmt = $pdo->prepare("SELECT id, name, email, password, age, roll_no, contact, class_code, user_id 
                            FROM students WHERE email = ?");
     $stmt->execute([$email]);
     $student = $stmt->fetch(PDO::FETCH_ASSOC);

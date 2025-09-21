@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Attendance API</title>
+</head>
+<body>
+    <h1>Test Attendance API</h1>
+    
+    <h2>1. Overall Attendance</h2>
+    <button onclick="testOverall()">Test Overall</button>
+    <div id="overall-result"></div>
+    
+    <h2>2. Date Specific Attendance</h2>
+    <input type="date" id="test-date" value="2025-05-21">
+    <button onclick="testDate()">Test Date</button>
+    <div id="date-result"></div>
+    
+    <script>
+        async function testOverall() {
+            try {
+                const response = await fetch('api/attendance_unified.php?email=harshil@gmail.com');
+                const data = await response.json();
+                document.getElementById('overall-result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('overall-result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testDate() {
+            try {
+                const date = document.getElementById('test-date').value;
+                const response = await fetch(`api/attendance_unified.php?email=harshil@gmail.com&date=${date}`);
+                const data = await response.json();
+                document.getElementById('date-result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('date-result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

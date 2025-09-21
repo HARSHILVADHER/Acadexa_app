@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import '../services/exam_service.dart';
 
 class ExamPage extends StatefulWidget {
   @override
@@ -13,44 +15,39 @@ class _ExamPageState extends State<ExamPage> {
   final Color cardColor = Colors.white;
   final Color backgroundColor = Color(0xFFF5F6FA);
 
-  // Example data
-  final List<Map<String, String>> upcomingExams = [
-    {
-      'subject': 'Physics',
-      'examName': 'Mid Term Exam',
-      'dateTime': 'Fri, Sep 12 • 10:00 AM - 12:00 PM',
-    },
-    {
-      'subject': 'Chemistry',
-      'examName': 'Unit Test',
-      'dateTime': 'Mon, Sep 15 • 9:00 AM - 10:30 AM',
-    },
-  ];
+  List<Map<String, dynamic>> upcomingExams = [];
+  List<Map<String, dynamic>> todayExams = [];
+  bool isLoading = true;
+  String? error;
 
-  final List<Map<String, String>> yourExams = [
-    {
-      'subject': 'Maths',
-      'examName': 'Final Exam',
-      'dateTime': 'Wed, Sep 20 • 11:00 AM - 1:00 PM',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadExams();
+  }
 
-  final List<Map<String, String>> results = [
-    {
-      'subject': 'Physics',
-      'examName': 'Mid Term Exam',
-      'score': '78/100',
-      'grade': 'B+',
-      'status': 'Passed',
-    },
-    {
-      'subject': 'Chemistry',
-      'examName': 'Unit Test',
-      'score': '92/100',
-      'grade': 'A',
-      'status': 'Passed',
-    },
-  ];
+  Future<void> _loadExams() async {
+    try {
+      final data = await ExamService.getExams();
+      if (data['success'] == true) {
+        setState(() {
+          upcomingExams = List<Map<String, dynamic>>.from(data['upcoming_exams'] ?? []);
+          todayExams = List<Map<String, dynamic>>.from(data['today_exams'] ?? []);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          error = data['error'] ?? 'Failed to load exams';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,113 +67,113 @@ class _ExamPageState extends State<ExamPage> {
         iconTheme: IconThemeData(color: primaryColor),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Section Tabs
-            SizedBox(
-              height: 48,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  sectionTab('Upcoming', 0),
-                  sectionTab('Your Exam', 1),
-                  sectionTab('Result', 2),
-                ],
-              ),
-            ),
-            SizedBox(height: 18),
-            Expanded(
-              child: Builder(
-                builder: (context) {
-                  if (selectedSection == 0) {
-                    // Upcoming Exams
-                    return ListView.separated(
-                      itemCount: upcomingExams.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 14),
-                      itemBuilder: (context, index) {
-                        final exam = upcomingExams[index];
-                        return examCard(exam);
-                      },
-                    );
-                  } else if (selectedSection == 1) {
-                    // Your Exams
-                    return ListView.separated(
-                      itemCount: yourExams.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 14),
-                      itemBuilder: (context, index) {
-                        final exam = yourExams[index];
-                        return examCard(exam);
-                      },
-                    );
-                  } else {
-                    // Results
-                    return ListView.separated(
-                      itemCount: results.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 14),
-                      itemBuilder: (context, index) {
-                        final result = results[index];
-                        return InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                backgroundColor: cardColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                title: Text(
-                                  '${result['subject']} - ${result['examName']}',
+      body: isLoading
+          ? Center(child: CircularProgressIndicator(color: primaryColor))
+          : error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red, size: 48),
+                      SizedBox(height: 16),
+                      Text(
+                        'Failed to load exams',
+                        style: GoogleFonts.poppins(fontSize: 16),
+                      ),
+                      SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                            error = null;
+                          });
+                          _loadExams();
+                        },
+                        child: Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Section Tabs
+                      SizedBox(
+                        height: 48,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            sectionTab('Upcoming', 0),
+                            sectionTab('Your Exam', 1),
+                            sectionTab('Result', 2),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 18),
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            if (selectedSection == 0) {
+                              // Upcoming Exams
+                              if (upcomingExams.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'No upcoming exams',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                );
+                              }
+                              return ListView.separated(
+                                itemCount: upcomingExams.length,
+                                separatorBuilder: (_, __) => SizedBox(height: 14),
+                                itemBuilder: (context, index) {
+                                  final exam = upcomingExams[index];
+                                  return examCard(exam);
+                                },
+                              );
+                            } else if (selectedSection == 1) {
+                              // Today's Exams
+                              if (todayExams.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'No exams today',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                );
+                              }
+                              return ListView.separated(
+                                itemCount: todayExams.length,
+                                separatorBuilder: (_, __) => SizedBox(height: 14),
+                                itemBuilder: (context, index) {
+                                  final exam = todayExams[index];
+                                  return examCard(exam);
+                                },
+                              );
+                            } else {
+                              // Results - Empty for now
+                              return Center(
+                                child: Text(
+                                  'Results coming soon',
                                   style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryColor,
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
                                   ),
                                 ),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Score: ${result['score']}',
-                                      style: GoogleFonts.poppins(fontSize: 16),
-                                    ),
-                                    Text(
-                                      'Grade: ${result['grade']}',
-                                      style: GoogleFonts.poppins(fontSize: 16),
-                                    ),
-                                    Text(
-                                      'Status: ${result['status']}',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16,
-                                        color: result['status'] == 'Passed'
-                                            ? Colors.green
-                                            : Colors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: Text('Close'),
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                  ),
-                                ],
-                              ),
-                            );
+                              );
+                            }
                           },
-                          child: resultCard(result),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
     );
   }
 
@@ -215,122 +212,141 @@ class _ExamPageState extends State<ExamPage> {
     );
   }
 
-  Widget examCard(Map<String, String> exam) {
-    return Card(
-      color: cardColor,
-      elevation: 5,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Row(
-          children: [
-            Icon(Icons.assignment_turned_in, color: primaryColor, size: 32),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    exam['subject'] ?? '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
+  Widget examCard(Map<String, dynamic> exam) {
+    final examDate = DateTime.parse(exam['exam_date']);
+    final dayName = DateFormat('EEEE').format(examDate);
+    final formattedDate = DateFormat('MMM dd, yyyy').format(examDate);
+    final startTime = exam['start_time'];
+    final endTime = exam['end_time'];
+    
+    return InkWell(
+      onTap: () => _showExamDetails(exam),
+      child: Card(
+        color: cardColor,
+        elevation: 5,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Row(
+            children: [
+              Icon(Icons.assignment_turned_in, color: primaryColor, size: 32),
+              SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      exam['exam_name'] ?? '',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  Text(
-                    exam['examName'] ?? '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: primaryColor,
-                      fontWeight: FontWeight.w600,
+                    SizedBox(height: 4),
+                    Text(
+                      '$dayName, $formattedDate',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 6),
-                  Text(
-                    exam['dateTime'] ?? '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: Colors.black54,
+                    Text(
+                      '$startTime - $endTime',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.grey[600],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
-          ],
+              Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget resultCard(Map<String, String> result) {
-    return Card(
-      color: cardColor,
-      elevation: 5,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+  void _showExamDetails(Map<String, dynamic> exam) {
+    final examDate = DateTime.parse(exam['exam_date']);
+    final dayName = DateFormat('EEEE').format(examDate);
+    final formattedDate = DateFormat('MMM dd, yyyy').format(examDate);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          exam['exam_name'] ?? '',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: primaryColor,
+            fontSize: 18,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow('Date', '$dayName, $formattedDate'),
+              _buildDetailRow('Time', '${exam['start_time']} - ${exam['end_time']}'),
+              _buildDetailRow('Total Marks', '${exam['total_marks']}'),
+              _buildDetailRow('Passing Marks', '${exam['passing_marks']}'),
+              if (exam['notes'] != null && exam['notes'].toString().isNotEmpty)
+                _buildDetailRow('Notes', exam['notes']),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text(
+              'Close',
+              style: GoogleFonts.poppins(color: primaryColor),
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Row(
-          children: [
-            Icon(Icons.emoji_events, color: primaryColor, size: 32),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    result['subject'] ?? '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    result['examName'] ?? '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: primaryColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 6),
-                  Text(
-                    'Score: ${result['score'] ?? ''}',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  Text(
-                    'Grade: ${result['grade'] ?? ''}',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  Text(
-                    'Status: ${result['status'] ?? ''}',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: result['status'] == 'Passed'
-                          ? Colors.green
-                          : Colors.red,
-                    ),
-                  ),
-                ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
             ),
-            Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
-          ],
-        ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../services/user_service.dart';
+import '../services/attendance_service.dart';
+import '../services/exam_service.dart';
 import 'your_batch.dart'; // Import your_batch.dart at the top
 import 'timetable.dart';
 import 'attendance.dart';
 import 'faculty.dart'; // Import faculty.dart for FacultyPage
 import 'profile.dart'; // Import profile.dart for ProfilePage
 import 'exam.dart'; // Import exam.dart for ExamPage
+import 'studymaterial.dart'; // Import studymaterial.dart for StudyMaterialPage
 
 void main() {
   runApp(MyApp());
@@ -25,7 +28,13 @@ class _MyAppState extends State<MyApp> {
   final Color backgroundColor = Color(0xFFF5F6FA);
   String userName = 'User';
   String greeting = 'Hello';
-  String batchName = '12 EM Science';
+  String batchName = '';
+  int attendancePercentage = 0;
+  List<Map<String, dynamic>> todayExams = [];
+  List<Map<String, dynamic>> upcomingExams = [];
+  bool examLoading = true;
+  PageController _examPageController = PageController();
+  int _currentExamIndex = 0;
 
   @override
   void initState() {
@@ -33,17 +42,62 @@ class _MyAppState extends State<MyApp> {
     _loadUserData();
   }
 
+  @override
+  void dispose() {
+    _examPageController.dispose();
+    super.dispose();
+  }
+
   _loadUserData() async {
     final name = await UserService.getUserName();
     final greet = UserService.getGreeting();
     final batch = await UserService.getBatchName();
-    print('Loaded batch name: $batch'); // Debug print
-    setState(() {
-      userName = name;
-      greeting = greet;
-      batchName = batch;
-    });
+
+    try {
+      final attendanceData = await AttendanceService.getOverallAttendance();
+      final percentage = attendanceData['overall_percentage'] ?? 0;
+      setState(() {
+        userName = name;
+        greeting = greet;
+        batchName = batch;
+        attendancePercentage = percentage;
+      });
+    } catch (e) {
+      setState(() {
+        userName = name;
+        greeting = greet;
+        batchName = batch;
+        attendancePercentage = 0;
+      });
+    }
+
+    _loadExamData();
   }
+
+  _loadExamData() async {
+    try {
+      final data = await ExamService.getExams();
+      if (data['success'] == true) {
+        setState(() {
+          todayExams =
+              List<Map<String, dynamic>>.from(data['today_exams'] ?? []);
+          upcomingExams =
+              List<Map<String, dynamic>>.from(data['upcoming_exams'] ?? []);
+          examLoading = false;
+        });
+      } else {
+        setState(() {
+          examLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        examLoading = false;
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +128,8 @@ class _MyAppState extends State<MyApp> {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          DateFormat('EEE, MMM d  •  h:mm a').format(DateTime.now()),
+                          DateFormat('EEE, MMM d  •  h:mm a')
+                              .format(DateTime.now()),
                           style: GoogleFonts.poppins(
                             color: Colors.black54,
                             fontSize: 12,
@@ -91,9 +146,9 @@ class _MyAppState extends State<MyApp> {
                             Navigator.of(context).push(
                               PageRouteBuilder(
                                 transitionDuration: Duration(milliseconds: 500),
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        SharedAxisTransition(
+                                pageBuilder: (context, animation,
+                                        secondaryAnimation) =>
+                                    SharedAxisTransition(
                                   animation: animation,
                                   secondaryAnimation: secondaryAnimation,
                                   transitionType:
@@ -124,8 +179,9 @@ class _MyAppState extends State<MyApp> {
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         transitionDuration: Duration(milliseconds: 500),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            SharedAxisTransition(
+                        pageBuilder:
+                            (context, animation, secondaryAnimation) =>
+                                SharedAxisTransition(
                           animation: animation,
                           secondaryAnimation: secondaryAnimation,
                           transitionType: SharedAxisTransitionType.horizontal,
@@ -173,7 +229,6 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      // Remove debugShowCheckedModeBanner
     );
   }
 
@@ -182,7 +237,7 @@ class _MyAppState extends State<MyApp> {
     required String title,
     required String subtitle,
     required Color iconColor,
-    required VoidCallback onTap, // <-- add this
+    required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
@@ -284,7 +339,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget attendanceCard(Color primaryColor, BuildContext context) {
-    double attendancePercent = 0.80; // 80% attendance
+    double attendancePercent = attendancePercentage / 100.0;
 
     return InkWell(
       onTap: () {
@@ -313,13 +368,12 @@ class _MyAppState extends State<MyApp> {
           padding: EdgeInsets.all(18),
           child: Row(
             children: [
-              // Remove background color and increase icon size
               Padding(
                 padding: EdgeInsets.all(4),
                 child: Image.asset(
                   'assets/icons/user-check.png',
-                  width: 44, // Increased size
-                  height: 44, // Increased size
+                  width: 44,
+                  height: 44,
                   color: primaryColor,
                 ),
               ),
@@ -345,7 +399,6 @@ class _MyAppState extends State<MyApp> {
                   ],
                 ),
               ),
-              // Animated Circular Attendance Graph
               TweenAnimationBuilder<double>(
                 tween: Tween<double>(begin: 0, end: attendancePercent),
                 duration: Duration(seconds: 1),
@@ -385,12 +438,108 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget examCard(Color primaryColor, BuildContext context) {
-    // Example upcoming exam data
-    final Map<String, String> exam = {
-      'subject': 'Physics',
-      'examName': 'Mid Term Exam',
-      'dateTime': 'Fri, Sep 12 • 10:00 AM - 12:00 PM',
-    };
+    if (examLoading) {
+      return Card(
+        color: Colors.white,
+        elevation: 5,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Row(
+            children: [
+              Icon(Icons.assignment_turned_in, color: primaryColor, size: 32),
+              SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Loading Exams...',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    CircularProgressIndicator(
+                      color: primaryColor,
+                      strokeWidth: 2,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final examsToShow = todayExams.isNotEmpty ? todayExams : upcomingExams;
+    final isToday = todayExams.isNotEmpty;
+    final title = isToday ? "Your Today's Exam" : "Upcoming Exam";
+
+    if (examsToShow.isEmpty) {
+      return InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 500),
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  SharedAxisTransition(
+                animation: animation,
+                secondaryAnimation: secondaryAnimation,
+                transitionType: SharedAxisTransitionType.horizontal,
+                child: ExamPage(),
+              ),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Card(
+          color: Colors.white,
+          elevation: 5,
+          shadowColor: Colors.black12,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(18),
+            child: Row(
+              children: [
+                Icon(Icons.assignment_turned_in,
+                    color: primaryColor, size: 32),
+                SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'No Exams',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'No exams scheduled',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return InkWell(
       onTap: () {
@@ -424,39 +573,20 @@ class _MyAppState extends State<MyApp> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // ✅ Prevent overflow
                   children: [
                     Text(
-                      'Upcoming Exam',
+                      title,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 6),
-                    Text(
-                      exam['subject'] ?? '',
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      exam['examName'] ?? '',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 6),
-                    Text(
-                      exam['dateTime'] ?? '',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: Colors.black54,
-                      ),
-                    ),
+                    SizedBox(height: 4),
+                    if (examsToShow.length == 1)
+                      _buildSingleExamInfo(examsToShow[0], primaryColor)
+                    else
+                      _buildScrollableExamInfo(examsToShow, primaryColor),
                   ],
                 ),
               ),
@@ -468,84 +598,176 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget studyMaterialsCard(Color primaryColor) {
-    List<String> subjects = ['Physics', 'Chemistry', 'Mathematics', 'Biology'];
-    return Card(
-      color: Colors.white,
-      elevation: 5,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.menu_book_outlined, color: primaryColor, size: 32),
-                SizedBox(width: 20),
-                Text(
-                  'Your Study Materials',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 14),
-            GridView.count(
-              physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              childAspectRatio: 2.7,
-              shrinkWrap: true,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 12,
-              children: subjects
-                  .map(
-                    (subject) => ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Color(0xFFF5F6FA), // Slight gray background
-                        foregroundColor: primaryColor,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        subject,
-                        style: GoogleFonts.poppins(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+  Widget _buildSingleExamInfo(
+      Map<String, dynamic> exam, Color primaryColor) {
+    final examDate = DateTime.parse(exam['exam_date']);
+    final dayName = DateFormat('EEEE').format(examDate);
+    final formattedDate = DateFormat('MMM dd').format(examDate);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min, // ✅ Prevent overflow
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          exam['exam_name'] ?? '',
+          style: GoogleFonts.poppins(
+            fontSize: 15,
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          '$dayName, $formattedDate',
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            color: Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          '${exam['start_time']} - ${exam['end_time']}',
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            color: Colors.black54,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildScrollableExamInfo(
+      List<Map<String, dynamic>> exams, Color primaryColor) {
+    return Column(
+      children: [
+        Container(
+          height: 70,
+          child: PageView.builder(
+            controller: _examPageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentExamIndex = index;
+              });
+            },
+            itemCount: exams.length,
+            itemBuilder: (context, index) {
+              final exam = exams[index];
+              final examDate = DateTime.parse(exam['exam_date']);
+              final dayName = DateFormat('EEEE').format(examDate);
+              final formattedDate = DateFormat('MMM dd').format(examDate);
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    exam['exam_name'] ?? '',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: primaryColor,
+                      fontWeight: FontWeight.w600,
                     ),
-                  )
-                  .toList(),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    '$dayName, $formattedDate',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '${exam['start_time']} - ${exam['end_time']}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            exams.length,
+            (index) => Container(
+              margin: EdgeInsets.symmetric(horizontal: 2),
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _currentExamIndex == index
+                    ? primaryColor
+                    : primaryColor.withOpacity(0.3),
+              ),
             ),
-            SizedBox(height: 2),
-            Align(
-              alignment: Alignment.bottomRight,
-              child:
-                  Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget studyMaterialsCard(Color primaryColor) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 500),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.horizontal,
+              child: StudyMaterialPage(),
             ),
-          ],
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        color: Colors.white,
+        elevation: 5,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Row(
+            children: [
+              Icon(Icons.menu_book, color: primaryColor, size: 32),
+              SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Study Materials',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'Access study notes & PDFs',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget facultyCard(Color primaryColor, BuildContext context) {
-    final List<Map<String, String>> faculty = [
-      {'name': 'Mr. Rohit Patel', 'subject': 'Physics'},
-      {'name': 'Mr. Nil Patel', 'subject': 'Maths'},
-      {'name': 'Mr. Vishal Jani', 'subject': 'Chemistry'},
-    ];
-
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
@@ -561,7 +783,7 @@ class _MyAppState extends State<MyApp> {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(16), // ripple matches card
+      borderRadius: BorderRadius.circular(16),
       child: Card(
         color: Colors.white,
         elevation: 5,
@@ -571,60 +793,28 @@ class _MyAppState extends State<MyApp> {
         ),
         child: Padding(
           padding: EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
+              Icon(Icons.person_outline, color: primaryColor, size: 32),
+              SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.person, color: primaryColor, size: 32),
-                  SizedBox(width: 20),
                   Text(
-                    'Your Faculty',
+                    'Faculty',
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 14),
-              ...faculty.map((f) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          f['name']!,
-                          style: GoogleFonts.poppins(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Color(0xFFF5F6FA),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            f['subject']!,
-                            style: GoogleFonts.poppins(
-                              color: primaryColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ],
+                  Text(
+                    'Meet your faculty team',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: Colors.black87,
                     ),
-                  )),
-              SizedBox(height: 4),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Icon(Icons.arrow_forward_ios,
-                    color: primaryColor, size: 18),
+                  ),
+                ],
               ),
             ],
           ),
@@ -634,42 +824,42 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget quickLinksCard(Color primaryColor) {
-    final List<String> links = [
-      'Fees',
-      'Your Score',
-      'Holidays',
-      'Gallery',
-    ];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: links
-            .map((title) => Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFF5F6FA), // light gray
-                      foregroundColor: primaryColor,
-                      elevation: 3,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      title,
-                      style: GoogleFonts.poppins(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ))
-            .toList(),
+    return Card(
+      color: Colors.white,
+      elevation: 5,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
+      child: Padding(
+        padding: EdgeInsets.all(18),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            quickLinkIcon(Icons.assignment, 'Assignments', primaryColor),
+            quickLinkIcon(Icons.bookmark_border, 'Bookmarks', primaryColor),
+            quickLinkIcon(Icons.chat_bubble_outline, 'Chat', primaryColor),
+            quickLinkIcon(Icons.settings_outlined, 'Settings', primaryColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget quickLinkIcon(IconData icon, String label, Color color) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 28),
+        SizedBox(height: 6),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }

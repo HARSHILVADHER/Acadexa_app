@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/attendance_service.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class AttendancePage extends StatefulWidget {
   @override
@@ -9,31 +10,68 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  final Color primaryColor = Color(0xFF4CAF50);
+  final Color primaryColor = Color(0xFF645BD6); // Purple theme
   final Color backgroundColor = Color(0xFFF5F6FA);
   final Color cardColor = Colors.white;
   
-  Map<String, dynamic>? attendanceData;
+  Map<String, dynamic>? overallData;
+  Map<String, dynamic>? todayAttendance;
+  Map<String, dynamic>? yesterdayAttendance;
+  Map<String, dynamic>? selectedDateAttendance;
+  
   bool isLoading = true;
   String? error;
+  DateTime selectedDate = DateTime.now();
+  DateTime focusedDate = DateTime.now();
+  bool showCalendar = false;
   
   @override
   void initState() {
     super.initState();
-    _loadAttendance();
+    _loadAllData();
   }
   
-  Future<void> _loadAttendance() async {
+  Future<void> _loadAllData() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+    
     try {
-      final data = await AttendanceService.getAttendance();
+      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final yesterday = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
+      
+      final results = await Future.wait([
+        AttendanceService.getOverallAttendance(),
+        AttendanceService.getAttendanceForDate(today),
+        AttendanceService.getAttendanceForDate(yesterday),
+      ]);
+      
       setState(() {
-        attendanceData = data;
+        overallData = results[0];
+        todayAttendance = results[1];
+        yesterdayAttendance = results[2];
+        selectedDateAttendance = results[1]; // Default to today
         isLoading = false;
       });
     } catch (e) {
       setState(() {
         error = e.toString();
         isLoading = false;
+      });
+    }
+  }
+  
+  Future<void> _loadDateAttendance(DateTime date) async {
+    final dateStr = DateFormat('yyyy-MM-dd').format(date);
+    try {
+      final data = await AttendanceService.getAttendanceForDate(dateStr);
+      setState(() {
+        selectedDateAttendance = data;
+      });
+    } catch (e) {
+      setState(() {
+        selectedDateAttendance = {'success': false, 'error': e.toString()};
       });
     }
   }
@@ -73,13 +111,7 @@ class _AttendancePageState extends State<AttendancePage> {
                       ),
                       SizedBox(height: 8),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isLoading = true;
-                            error = null;
-                          });
-                          _loadAttendance();
-                        },
+                        onPressed: _loadAllData,
                         child: Text('Retry'),
                       ),
                     ],
@@ -87,38 +119,29 @@ class _AttendancePageState extends State<AttendancePage> {
                 )
               : Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        'Attendance',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFF3E0),
+                          color: backgroundColor,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30),
                             topRight: Radius.circular(30),
                           ),
                         ),
-                        child: Padding(
+                        child: SingleChildScrollView(
                           padding: EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildAttendanceHeader(),
+                              _buildAttendanceGraph(),
                               SizedBox(height: 20),
-                              _buildDateSection(),
+                              _buildTodayYesterdaySection(),
+                              if (showCalendar) ...[
+                                SizedBox(height: 20),
+                                _buildCalendarSection(),
+                              ],
                               SizedBox(height: 20),
-                              _buildLegend(),
-                              SizedBox(height: 20),
-                              Expanded(child: _buildSubjectsList()),
+                              _buildSelectedDateAttendance(),
                             ],
                           ),
                         ),
@@ -129,13 +152,16 @@ class _AttendancePageState extends State<AttendancePage> {
     );
   }
   
-  Widget _buildAttendanceHeader() {
-    final percentage = attendanceData?['overall_percentage'] ?? 0;
+  Widget _buildAttendanceGraph() {
+    final percentage = overallData?['overall_percentage'] ?? 0;
+    final presentDays = overallData?['present_days'] ?? 0;
+    final totalDays = overallData?['total_days'] ?? 0;
+    
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -146,18 +172,39 @@ class _AttendancePageState extends State<AttendancePage> {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.calendar_today,
-            color: Colors.grey[600],
-            size: 24,
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  value: percentage / 100,
+                  strokeWidth: 6,
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    percentage >= 75 ? primaryColor : 
+                    percentage >= 50 ? Colors.orange : Colors.red,
+                  ),
+                ),
+              ),
+              Text(
+                '$percentage%',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
           ),
-          SizedBox(width: 12),
+          SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Your Attendance',
+                  'Overall Attendance',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -165,21 +212,13 @@ class _AttendancePageState extends State<AttendancePage> {
                   ),
                 ),
                 Text(
-                  'Till Yesterday',
+                  '$presentDays out of $totalDays days',
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Colors.grey[600],
                   ),
                 ),
               ],
-            ),
-          ),
-          Text(
-            '$percentage%',
-            style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: primaryColor,
             ),
           ),
         ],
@@ -187,171 +226,242 @@ class _AttendancePageState extends State<AttendancePage> {
     );
   }
   
-  Widget _buildDateSection() {
-    final now = DateTime.now();
-    final yesterday = now.subtract(Duration(days: 1));
-    final today = now;
-    
-    return Column(
-      children: [
-        _buildDateRow('Yesterday', DateFormat('dd MMM yyyy').format(yesterday)),
-        SizedBox(height: 12),
-        _buildDateRow('Today', DateFormat('dd MMM yyyy').format(today)),
-      ],
+  Widget _buildTodayYesterdaySection() {
+    return Container(
+      padding: EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recent Attendance',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    showCalendar = !showCalendar;
+                  });
+                },
+                icon: Icon(
+                  Icons.calendar_today,
+                  color: primaryColor,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          _buildDateRow('Today', DateTime.now(), todayAttendance),
+          SizedBox(height: 12),
+          _buildDateRow('Yesterday', DateTime.now().subtract(Duration(days: 1)), yesterdayAttendance),
+        ],
+      ),
     );
   }
   
-  Widget _buildDateRow(String label, String date) {
+  Widget _buildDateRow(String label, DateTime date, Map<String, dynamic>? attendanceData) {
+    String status = 'No attendance';
+    Color statusColor = Colors.grey;
+    
+    if (attendanceData != null && attendanceData['success'] == true) {
+      if (attendanceData['has_attendance'] == true) {
+        status = attendanceData['status'] == 'present' ? 'Present' : 'Absent';
+        statusColor = attendanceData['status'] == 'present' ? Colors.green : Colors.red;
+      }
+    }
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        Text(
-          date,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildLegend() {
-    return Row(
-      children: [
-        _buildLegendItem('Lab', Color(0xFF2E7D32)),
-        SizedBox(width: 20),
-        _buildLegendItem('Theory', primaryColor),
-        SizedBox(width: 20),
-        _buildLegendItem('Workshop', Color(0xFF7B1FA2)),
-      ],
-    );
-  }
-  
-  Widget _buildLegendItem(String label, Color color) {
-    return Row(
-      children: [
-        Container(
-          width: 16,
-          height: 4,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        SizedBox(width: 6),
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildSubjectsList() {
-    final subjectAttendance = attendanceData?['subject_attendance'] as Map<String, dynamic>? ?? {};
-    
-    if (subjectAttendance.isEmpty) {
-      return Center(
-        child: Text(
-          'No attendance data available',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
-        ),
-      );
-    }
-    
-    return ListView.builder(
-      itemCount: subjectAttendance.length,
-      itemBuilder: (context, index) {
-        final subject = subjectAttendance.keys.elementAt(index);
-        final data = subjectAttendance[subject];
-        final percentage = data['percentage'] ?? 0;
-        
-        return _buildSubjectCard(subject, percentage);
-      },
-    );
-  }
-  
-  Widget _buildSubjectCard(String subject, int percentage) {
-    Color barColor;
-    if (percentage >= 75) {
-      barColor = primaryColor;
-    } else if (percentage >= 50) {
-      barColor = Colors.orange;
-    } else {
-      barColor = Colors.red;
-    }
-    
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            child: Text(
-              subject,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
               ),
             ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Container(
-              height: 24,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
+            Text(
+              DateFormat('dd MMM yyyy').format(date),
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
               ),
-              child: Stack(
+            ),
+          ],
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: statusColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: statusColor.withOpacity(0.3)),
+          ),
+          child: Text(
+            status,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: statusColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildCalendarSection() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      padding: EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Select Date',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 16),
+          TableCalendar(
+            firstDay: DateTime.utc(2020, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            focusedDay: focusedDate,
+            selectedDayPredicate: (day) => isSameDay(selectedDate, day),
+            calendarFormat: CalendarFormat.month,
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: primaryColor,
+              ),
+            ),
+            calendarStyle: CalendarStyle(
+              outsideDaysVisible: false,
+              selectedDecoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+              todayDecoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              defaultTextStyle: GoogleFonts.poppins(fontSize: 14),
+              weekendTextStyle: GoogleFonts.poppins(fontSize: 14, color: Colors.red),
+            ),
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                selectedDate = selectedDay;
+                focusedDate = focusedDay;
+                showCalendar = false; // Hide calendar after selection
+              });
+              _loadDateAttendance(selectedDay);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildSelectedDateAttendance() {
+    String status = 'No attendance';
+    Color statusColor = Colors.grey;
+    String dateStr = DateFormat('dd MMM yyyy').format(selectedDate);
+    
+    if (selectedDateAttendance != null && selectedDateAttendance!['success'] == true) {
+      if (selectedDateAttendance!['has_attendance'] == true) {
+        status = selectedDateAttendance!['status'] == 'present' ? 'Present' : 'Absent';
+        statusColor = selectedDateAttendance!['status'] == 'present' ? Colors.green : Colors.red;
+      }
+    }
+    
+    return Container(
+      padding: EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Attendance for $dateStr',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 16),
+          Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: statusColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: statusColor.withOpacity(0.3), width: 2),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  Icon(
+                    status == 'Present' ? Icons.check_circle : 
+                    status == 'Absent' ? Icons.cancel : Icons.help_outline,
+                    color: statusColor,
+                    size: 20,
                   ),
-                  FractionallySizedBox(
-                    widthFactor: percentage / 100.0,
-                    child: Container(
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: barColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 8,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: Text(
-                        '$percentage',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: percentage > 50 ? Colors.white : Colors.black87,
-                        ),
-                      ),
+                  SizedBox(width: 8),
+                  Text(
+                    status,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: statusColor,
                     ),
                   ),
                 ],

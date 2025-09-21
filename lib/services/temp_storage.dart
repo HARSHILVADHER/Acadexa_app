@@ -3,7 +3,7 @@ class TempStorage {
   static String? _userName;
   
   static void setUserEmail(String email) {
-    _userEmail = email;
+    _userEmail = email.isEmpty ? null : email;
   }
   
   static String? getUserEmail() {
@@ -11,10 +11,15 @@ class TempStorage {
   }
   
   static void setUserName(String name) {
-    _userName = name;
+    _userName = name == 'User' ? null : name;
   }
   
   static String getUserName() {
     return _userName ?? 'User';
+  }
+  
+  static void clearAll() {
+    _userEmail = null;
+    _userName = null;
   }
 }
