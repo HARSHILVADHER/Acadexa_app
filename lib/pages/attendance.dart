@@ -30,6 +30,8 @@ class _AttendancePageState extends State<AttendancePage> {
     super.initState();
     _loadAllData();
   }
+
+
   
   Future<void> _loadAllData() async {
     setState(() {
@@ -54,6 +56,7 @@ class _AttendancePageState extends State<AttendancePage> {
         selectedDateAttendance = results[1]; // Default to today
         isLoading = false;
       });
+
     } catch (e) {
       setState(() {
         error = e.toString();

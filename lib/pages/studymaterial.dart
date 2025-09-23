@@ -9,8 +9,9 @@ class StudyMaterialPage extends StatefulWidget {
 }
 
 class _StudyMaterialPageState extends State<StudyMaterialPage> {
-  final Color primaryColor = Color(0xFF645BD6);
-  final Color backgroundColor = Color(0xFFF5F6FA);
+  final Color primaryColor = Color(0xFF2563EB);
+  final Color secondaryColor = Color(0xFF1E40AF);
+  final Color backgroundColor = Color(0xFFF8FAFC);
   
   String selectedType = 'notes';
   Map<String, dynamic> materials = {};
@@ -81,6 +82,8 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
       SnackBar(
         content: Text(message),
         backgroundColor: primaryColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -89,20 +92,28 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           fileName,
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+          ),
         ),
         content: Text(
           'File loaded successfully. In a real app, this would open the PDF viewer.',
-          style: GoogleFonts.poppins(),
+          style: GoogleFonts.poppins(color: Colors.grey[700]),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               'OK',
-              style: GoogleFonts.poppins(color: primaryColor),
+              style: GoogleFonts.poppins(
+                color: primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -114,107 +125,175 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: primaryColor),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Study Materials',
-          style: GoogleFonts.poppins(
-            color: primaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Type selector
-          Container(
-            margin: EdgeInsets.all(16),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Modern Header
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [primaryColor, secondaryColor],
                 ),
-              ],
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: selectedType,
-                isExpanded: true,
-                icon: Icon(Icons.keyboard_arrow_down, color: primaryColor),
-                style: GoogleFonts.poppins(
-                  color: primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
                 ),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      selectedType = newValue;
-                    });
-                    _loadMaterials();
-                  }
-                },
-                items: materialTypes.map<DropdownMenuItem<String>>((type) {
-                  return DropdownMenuItem<String>(
-                    value: type['value'],
-                    child: Text(type['label']!),
-                  );
-                }).toList(),
+              ),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      'Study Materials',
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          
-          // Content
-          Expanded(
-            child: isLoading
-                ? Center(
-                    child: CircularProgressIndicator(color: primaryColor),
-                  )
-                : errorMessage.isNotEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.error_outline, size: 64, color: Colors.grey),
-                            SizedBox(height: 16),
-                            Text(
-                              errorMessage,
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                              ),
+
+            // Type Selector
+            Container(
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedType,
+                  isExpanded: true,
+                  icon: Container(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.keyboard_arrow_down, color: primaryColor),
+                  ),
+                  style: GoogleFonts.poppins(
+                    color: primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        selectedType = newValue;
+                      });
+                      _loadMaterials();
+                    }
+                  },
+                  items: materialTypes.map<DropdownMenuItem<String>>((type) {
+                    return DropdownMenuItem<String>(
+                      value: type['value'],
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Text(type['label']!),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            
+            // Content
+            Expanded(
+              child: isLoading
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(color: primaryColor),
+                          SizedBox(height: 16),
+                          Text(
+                            'Loading materials...',
+                            style: GoogleFonts.poppins(
+                              color: Colors.grey[600],
+                              fontSize: 16,
                             ),
-                            SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _loadMaterials,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                          ),
+                        ],
+                      ),
+                    )
+                  : errorMessage.isNotEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(Icons.error_outline, size: 48, color: Colors.red),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                'Failed to load materials',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[800],
                                 ),
                               ),
-                              child: Text(
-                                'Retry',
-                                style: GoogleFonts.poppins(color: Colors.white),
+                              SizedBox(height: 8),
+                              Text(
+                                errorMessage,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : _buildMaterialsList(),
-          ),
-        ],
+                              SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _loadMaterials,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                ),
+                                child: Text(
+                                  'Retry',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _buildMaterialsList(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -225,14 +304,21 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.folder_open, size: 64, color: Colors.grey),
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(Icons.folder_open, size: 48, color: Colors.grey[400]),
+            ),
             SizedBox(height: 16),
             Text(
               'No materials available',
               style: GoogleFonts.poppins(
                 fontSize: 18,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+                color: Colors.grey[800],
+                fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: 8),
@@ -240,7 +326,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
               'Check back later for new content',
               style: GoogleFonts.poppins(
                 fontSize: 14,
-                color: Colors.grey[500],
+                color: Colors.grey[600],
               ),
             ),
           ],
@@ -251,7 +337,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
     final typeMaterials = materials[selectedType] as Map<String, dynamic>;
     
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       itemCount: typeMaterials.keys.length,
       itemBuilder: (context, index) {
         final subject = typeMaterials.keys.elementAt(index);
@@ -263,21 +349,34 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
   }
 
   Widget _buildSubjectCard(String subject, List<dynamic> subjectMaterials) {
-    return Card(
+    return Container(
       margin: EdgeInsets.only(bottom: 16),
-      elevation: 4,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: ExpansionTile(
-        leading: Icon(Icons.folder, color: primaryColor, size: 28),
+        leading: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(Icons.folder, color: primaryColor, size: 20),
+        ),
         title: Text(
           subject,
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Colors.grey[800],
           ),
         ),
         subtitle: Text(
@@ -295,47 +394,66 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
   }
 
   Widget _buildMaterialTile(Map<String, dynamic> material) {
-    return ListTile(
-      leading: Icon(
-        _getFileIcon(material['file_type']),
-        color: primaryColor,
-        size: 24,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
       ),
-      title: Text(
-        material['title'] ?? material['file_name'],
-        style: GoogleFonts.poppins(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+      child: ListTile(
+        leading: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _getFileColor(material['file_type']).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            _getFileIcon(material['file_type']),
+            color: _getFileColor(material['file_type']),
+            size: 20,
+          ),
         ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (material['description'] != null && material['description'].isNotEmpty)
+        title: Text(
+          material['title'] ?? material['file_name'],
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[800],
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (material['description'] != null && material['description'].isNotEmpty)
+              Text(
+                material['description'],
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            SizedBox(height: 4),
             Text(
-              material['description'],
+              material['file_name'],
               style: GoogleFonts.poppins(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: Colors.grey[500],
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
-          SizedBox(height: 4),
-          Text(
-            material['file_name'],
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: Colors.grey[500],
-            ),
+          ],
+        ),
+        trailing: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
           ),
-        ],
+          child: Icon(Icons.visibility, color: primaryColor, size: 16),
+        ),
+        onTap: () => _downloadMaterial(material),
       ),
-      trailing: IconButton(
-        icon: Icon(Icons.visibility, color: primaryColor),
-        onPressed: () => _downloadMaterial(material),
-      ),
-      onTap: () => _downloadMaterial(material),
     );
   }
 
@@ -354,6 +472,24 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
         return Icons.table_chart;
       default:
         return Icons.insert_drive_file;
+    }
+  }
+
+  Color _getFileColor(String fileType) {
+    switch (fileType.toLowerCase()) {
+      case 'pdf':
+        return Colors.red;
+      case 'doc':
+      case 'docx':
+        return Colors.blue;
+      case 'ppt':
+      case 'pptx':
+        return Colors.orange;
+      case 'xls':
+      case 'xlsx':
+        return Colors.green;
+      default:
+        return Colors.grey;
     }
   }
 }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FacultyPage extends StatelessWidget {
-  final Color primaryColor = Color(0xFF645BD6); // Purple tone
-  final Color cardColor = Colors.white;
-  final Color backgroundColor = Color(0xFFF5F6FA);
+  final Color primaryColor = Color(0xFF2563EB);
+  final Color secondaryColor = Color(0xFF1E40AF);
+  final Color backgroundColor = Color(0xFFF8FAFC);
 
   final List<Map<String, String>> facultyList = [
     {
@@ -12,103 +12,412 @@ class FacultyPage extends StatelessWidget {
       'subject': 'Physics',
       'contact': '+91 98765 43210',
       'availability': 'Mon-Fri, 9:00 AM - 12:00 PM',
+      'department': 'Science',
     },
     {
       'name': 'Nil Patel',
-      'subject': 'Maths',
+      'subject': 'Mathematics',
       'contact': '+91 91234 56789',
       'availability': 'Mon-Fri, 1:00 PM - 4:00 PM',
+      'department': 'Science',
     },
     {
       'name': 'Vishal Jani',
       'subject': 'Chemistry',
       'contact': '+91 99887 77665',
       'availability': 'Tue-Sat, 10:00 AM - 1:00 PM',
+      'department': 'Science',
     },
     {
       'name': 'Sneha Joshi',
       'subject': 'Biology',
       'contact': '+91 90909 80808',
       'availability': 'Mon, Wed, Fri, 2:00 PM - 5:00 PM',
+      'department': 'Science',
     },
-    // Add more faculty as needed
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        title: Text(
-          'Faculty Details',
-          style: GoogleFonts.poppins(
-            color: primaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        iconTheme: IconThemeData(color: primaryColor),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: ListView.separated(
-          itemCount: facultyList.length,
-          separatorBuilder: (_, __) => SizedBox(height: 18),
-          itemBuilder: (context, index) {
-            final faculty = facultyList[index];
-            return Card(
-              color: cardColor,
-              elevation: 5,
-              shadowColor: Colors.black12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Modern Header
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [primaryColor, secondaryColor],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      faculty['name'] ?? '',
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        color: primaryColor,
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                        ),
                       ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          'Faculty',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    SizedBox(height: 6),
-                    Text(
-                      'Subject: ${faculty['subject'] ?? ''}',
+                    child: Text(
+                      '${facultyList.length} Faculty Members',
                       style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.black87,
+                        color: Colors.white,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 6),
-                    Text(
-                      'Contact: ${faculty['contact'] ?? ''}',
+                  ),
+                ],
+              ),
+            ),
+
+            // Faculty List
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.all(20),
+                itemCount: facultyList.length,
+                itemBuilder: (context, index) {
+                  final faculty = facultyList[index];
+                  return _buildFacultyCard(faculty, context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFacultyCard(Map<String, String> faculty, BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with avatar and name
+            Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [primaryColor, secondaryColor],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        faculty['name'] ?? '',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          faculty['subject'] ?? '',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+
+            // Contact Information
+            _buildInfoRow(Icons.phone_outlined, 'Contact', faculty['contact'] ?? ''),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.schedule_outlined, 'Available', faculty['availability'] ?? ''),
+            SizedBox(height: 16),
+
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showContactDialog(context, faculty),
+                    icon: Icon(Icons.phone, size: 16),
+                    label: Text(
+                      'Contact',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
-                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 6),
-                    Text(
-                      'Available: ${faculty['availability'] ?? ''}',
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showScheduleDialog(context, faculty),
+                    icon: Icon(Icons.schedule, size: 16),
+                    label: Text(
+                      'Schedule',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
-                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ],
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: primaryColor,
+                      side: BorderSide(color: primaryColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(icon, size: 16, color: Colors.grey[600]),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            );
-          },
+              Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
+      ],
+    );
+  }
+
+  void _showContactDialog(BuildContext context, Map<String, String> faculty) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Contact ${faculty['name']}',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.phone, color: primaryColor),
+              title: Text(
+                'Call',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              ),
+              subtitle: Text(faculty['contact'] ?? ''),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Calling ${faculty['contact']}...'),
+                    backgroundColor: primaryColor,
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.message, color: primaryColor),
+              title: Text(
+                'Message',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              ),
+              subtitle: Text('Send SMS'),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Opening messages...'),
+                    backgroundColor: primaryColor,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Close',
+              style: GoogleFonts.poppins(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showScheduleDialog(BuildContext context, Map<String, String> faculty) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          '${faculty['name']} Schedule',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Subject: ${faculty['subject']}',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Availability:',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[700],
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              faculty['availability'] ?? '',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Close',
+              style: GoogleFonts.poppins(
+                color: primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

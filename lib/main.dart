@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
-import 'pages/email.dart'; // Add this import
+import 'pages/email.dart';
+import 'services/user_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(AcadexaApp());
@@ -17,12 +19,16 @@ class AcadexaApp extends StatefulWidget {
 class _AcadexaAppState extends State<AcadexaApp> {
   ThemeMode _themeMode = ThemeMode.light;
 
+
+
   void toggleTheme() {
     setState(() {
       _themeMode =
           _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {

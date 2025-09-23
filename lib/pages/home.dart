@@ -5,13 +5,13 @@ import 'package:intl/intl.dart';
 import '../services/user_service.dart';
 import '../services/attendance_service.dart';
 import '../services/exam_service.dart';
-import 'your_batch.dart'; // Import your_batch.dart at the top
+import 'your_batch.dart';
 import 'timetable.dart';
 import 'attendance.dart';
-import 'faculty.dart'; // Import faculty.dart for FacultyPage
-import 'profile.dart'; // Import profile.dart for ProfilePage
-import 'exam.dart'; // Import exam.dart for ExamPage
-import 'studymaterial.dart'; // Import studymaterial.dart for StudyMaterialPage
+import 'faculty.dart';
+import 'profile.dart';
+import 'exam.dart';
+import 'studymaterial.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,9 +23,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final Color primaryColor = Color(0xFF645BD6); // Purple tone
+  final Color primaryColor = Color(0xFF2563EB);
+  final Color secondaryColor = Color(0xFF1E40AF);
+  final Color accentColor = Color(0xFF3B82F6);
   final Color cardColor = Colors.white;
-  final Color backgroundColor = Color(0xFFF5F6FA);
+  final Color backgroundColor = Color(0xFFF8FAFC);
+  
   String userName = 'User';
   String greeting = 'Hello';
   String batchName = '';
@@ -79,10 +82,8 @@ class _MyAppState extends State<MyApp> {
       final data = await ExamService.getExams();
       if (data['success'] == true) {
         setState(() {
-          todayExams =
-              List<Map<String, dynamic>>.from(data['today_exams'] ?? []);
-          upcomingExams =
-              List<Map<String, dynamic>>.from(data['upcoming_exams'] ?? []);
+          todayExams = List<Map<String, dynamic>>.from(data['today_exams'] ?? []);
+          upcomingExams = List<Map<String, dynamic>>.from(data['upcoming_exams'] ?? []);
           examLoading = false;
         });
       } else {
@@ -97,8 +98,6 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -106,156 +105,369 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         backgroundColor: backgroundColor,
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top greeting and icons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            children: [
+              // Modern Header with gradient
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [primaryColor, secondaryColor],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+                child: Column(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // Top row with greeting and icons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          '$greeting, $userName',
-                          style: GoogleFonts.poppins(
-                            color: primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$greeting!',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              Text(
+                                userName,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 2),
-                        Text(
-                          DateFormat('EEE, MMM d  •  h:mm a')
-                              .format(DateTime.now()),
-                          style: GoogleFonts.poppins(
-                            color: Colors.black54,
-                            fontSize: 12,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(Icons.notifications_none, 
+                                color: Colors.white, size: 20),
+                            ),
+                            SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    transitionDuration: Duration(milliseconds: 500),
+                                    pageBuilder: (context, animation, secondaryAnimation) =>
+                                        SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType: SharedAxisTransitionType.horizontal,
+                                      child: ProfilePage(toggleTheme: () {}),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(Icons.person_outline, 
+                                  color: Colors.white, size: 20),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Icon(Icons.notifications_none, color: primaryColor),
-                        SizedBox(width: 12),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                transitionDuration: Duration(milliseconds: 500),
-                                pageBuilder: (context, animation,
-                                        secondaryAnimation) =>
-                                    SharedAxisTransition(
-                                  animation: animation,
-                                  secondaryAnimation: secondaryAnimation,
-                                  transitionType:
-                                      SharedAxisTransitionType.horizontal,
-                                  child: ProfilePage(
-                                    toggleTheme: () {},
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          child:
-                              Icon(Icons.person_outline, color: primaryColor),
+                    SizedBox(height: 20),
+                    // Date and time
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        DateFormat('EEEE, MMMM d • h:mm a').format(DateTime.now()),
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(height: 14),
-
-                // Batch Card
-                customCard(
-                  icon: Icons.groups,
-                  title: 'Your Batch :',
-                  subtitle: batchName,
-                  iconColor: primaryColor,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        transitionDuration: Duration(milliseconds: 500),
-                        pageBuilder:
-                            (context, animation, secondaryAnimation) =>
-                                SharedAxisTransition(
-                          animation: animation,
-                          secondaryAnimation: secondaryAnimation,
-                          transitionType: SharedAxisTransitionType.horizontal,
-                          child: YourBatchPage(),
+              ),
+              
+              // Scrollable content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Quick stats row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatCard(
+                              'Attendance',
+                              '${attendancePercentage}%',
+                              Icons.check_circle_outline,
+                              attendancePercentage >= 75 ? Colors.green : Colors.orange,
+                              () => Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  transitionDuration: Duration(milliseconds: 500),
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                      SharedAxisTransition(
+                                    animation: animation,
+                                    secondaryAnimation: secondaryAnimation,
+                                    transitionType: SharedAxisTransitionType.horizontal,
+                                    child: AttendancePage(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: _buildStatCard(
+                              'Batch',
+                              batchName.isNotEmpty ? batchName : 'Loading...',
+                              Icons.groups_outlined,
+                              accentColor,
+                              () => Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  transitionDuration: Duration(milliseconds: 500),
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                      SharedAxisTransition(
+                                    animation: animation,
+                                    secondaryAnimation: secondaryAnimation,
+                                    transitionType: SharedAxisTransitionType.horizontal,
+                                    child: YourBatchPage(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 24),
+                      
+                      // Main features grid
+                      Text(
+                        'Today\'s Overview',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey[800],
                         ),
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 14),
-
-                // Schedule Card
-                scheduleCard(primaryColor, context),
-                SizedBox(height: 14),
-
-                // Attendance Card
-                attendanceCard(primaryColor, context),
-                SizedBox(height: 14),
-
-                // Exam Card
-                examCard(primaryColor, context),
-                SizedBox(height: 14),
-
-                // Study Materials
-                studyMaterialsCard(primaryColor),
-                SizedBox(height: 14),
-
-                // Faculty Card
-                facultyCard(primaryColor, context),
-                SizedBox(height: 24),
-
-                // Quick Links
-                Text(
-                  'Quick Links',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.black87,
+                      SizedBox(height: 16),
+                      
+                      // Schedule and Exam cards
+                      _buildModernCard(
+                        icon: Icons.schedule,
+                        title: 'Today\'s Schedule',
+                        subtitle: 'Next: Physics, 4:00 to 5:00 PM',
+                        color: primaryColor,
+                        onTap: () => Navigator.of(context).push(
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 500),
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                SharedAxisTransition(
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: SharedAxisTransitionType.horizontal,
+                              child: TimetablePage(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      
+                      examCard(primaryColor, context),
+                      SizedBox(height: 24),
+                      
+                      // Services section
+                      Text(
+                        'Academic Services',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      
+                      // Services grid
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 1.2,
+                        children: [
+                          _buildServiceCard(
+                            icon: Icons.menu_book,
+                            title: 'Study Materials',
+                            subtitle: 'Notes & Resources',
+                            color: Colors.purple,
+                            onTap: () => Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    SharedAxisTransition(
+                                  animation: animation,
+                                  secondaryAnimation: secondaryAnimation,
+                                  transitionType: SharedAxisTransitionType.horizontal,
+                                  child: StudyMaterialPage(),
+                                ),
+                              ),
+                            ),
+                          ),
+                          _buildServiceCard(
+                            icon: Icons.people,
+                            title: 'Faculty',
+                            subtitle: 'Meet Your Teachers',
+                            color: Colors.teal,
+                            onTap: () => Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    SharedAxisTransition(
+                                  animation: animation,
+                                  secondaryAnimation: secondaryAnimation,
+                                  transitionType: SharedAxisTransitionType.horizontal,
+                                  child: FacultyPage(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 24),
+                      
+                      // Quick actions
+                      Text(
+                        'Quick Actions',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      _buildQuickActionsRow(),
+                    ],
                   ),
                 ),
-                SizedBox(height: 14),
-                quickLinksCard(primaryColor),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget customCard({
+  Widget _buildStatCard(String title, String value, IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            SizedBox(height: 12),
+            Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernCard({
     required IconData icon,
     required String title,
     required String subtitle,
-    required Color iconColor,
+    required Color color,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Icon(icon, size: 32, color: iconColor),
-              SizedBox(width: 20),
-              Column(
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -263,285 +475,192 @@ class _MyAppState extends State<MyApp> {
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
                     ),
                   ),
+                  SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
+                      fontSize: 14,
+                      color: Colors.grey[600],
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+          ],
         ),
       ),
     );
   }
 
-  Widget scheduleCard(Color primaryColor, BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                SharedAxisTransition(
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.horizontal,
-              child: TimetablePage(),
-            ),
-          ),
-        );
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
+  Widget _buildServiceCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Icon(Icons.calendar_today_outlined,
-                  size: 32, color: primaryColor),
-              SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Your Schedule',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'Next: Physics, 4:00 to 5:00 PM',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
-          ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget attendanceCard(Color primaryColor, BuildContext context) {
-    double attendancePercent = attendancePercentage / 100.0;
-
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                SharedAxisTransition(
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.horizontal,
-              child: AttendancePage(),
-            ),
-          ),
-        );
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
+  Widget _buildQuickActionsRow() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
         color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildQuickAction(Icons.assignment, 'Assignments', Colors.orange),
+          _buildQuickAction(Icons.bookmark_border, 'Bookmarks', Colors.blue),
+          _buildQuickAction(Icons.chat_bubble_outline, 'Chat', Colors.green),
+          _buildQuickAction(Icons.settings_outlined, 'Settings', Colors.grey),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAction(IconData icon, String label, Color color) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 20),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(4),
-                child: Image.asset(
-                  'assets/icons/user-check.png',
-                  width: 44,
-                  height: 44,
-                  color: primaryColor,
-                ),
-              ),
-              SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Your Attendance',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      'till yesterday',
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0, end: attendancePercent),
-                duration: Duration(seconds: 1),
-                builder: (context, value, child) {
-                  return Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 42,
-                        height: 42,
-                        child: CircularProgressIndicator(
-                          value: value,
-                          strokeWidth: 5,
-                          backgroundColor: primaryColor.withOpacity(0.15),
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(primaryColor),
-                        ),
-                      ),
-                      Text(
-                        '${(value * 100).toInt()}%',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: primaryColor,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              Icon(Icons.arrow_forward_ios, color: primaryColor),
-            ],
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[700],
           ),
         ),
-      ),
+      ],
     );
   }
 
   Widget examCard(Color primaryColor, BuildContext context) {
     if (examLoading) {
-      return Card(
-        color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
+      return Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Icon(Icons.assignment_turned_in, color: primaryColor, size: 32),
-              SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Loading Exams...',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    CircularProgressIndicator(
-                      color: primaryColor,
-                      strokeWidth: 2,
-                    ),
-                  ],
-                ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
-          ),
+              child: Icon(Icons.assignment_turned_in, color: primaryColor, size: 24),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Loading Exams...',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  SizedBox(
+                    height: 2,
+                    child: LinearProgressIndicator(
+                      color: primaryColor,
+                      backgroundColor: primaryColor.withOpacity(0.2),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }
 
     final examsToShow = todayExams.isNotEmpty ? todayExams : upcomingExams;
     final isToday = todayExams.isNotEmpty;
-    final title = isToday ? "Your Today's Exam" : "Upcoming Exam";
+    final title = isToday ? "Today's Exams" : "Upcoming Exams";
 
-    if (examsToShow.isEmpty) {
-      return InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              transitionDuration: Duration(milliseconds: 500),
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  SharedAxisTransition(
-                animation: animation,
-                secondaryAnimation: secondaryAnimation,
-                transitionType: SharedAxisTransitionType.horizontal,
-                child: ExamPage(),
-              ),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Card(
-          color: Colors.white,
-          elevation: 5,
-          shadowColor: Colors.black12,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(18),
-            child: Row(
-              children: [
-                Icon(Icons.assignment_turned_in,
-                    color: primaryColor, size: 32),
-                SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'No Exams',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'No exams scheduled',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
@@ -556,56 +675,76 @@ class _MyAppState extends State<MyApp> {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Icon(Icons.assignment_turned_in, color: primaryColor, size: 32),
-              SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min, // ✅ Prevent overflow
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    if (examsToShow.length == 1)
-                      _buildSingleExamInfo(examsToShow[0], primaryColor)
-                    else
-                      _buildScrollableExamInfo(examsToShow, primaryColor),
-                  ],
-                ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: examsToShow.isEmpty ? Colors.grey.withOpacity(0.1) : primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              Icon(Icons.arrow_forward_ios, color: primaryColor, size: 18),
-            ],
-          ),
+              child: Icon(
+                Icons.assignment_turned_in, 
+                color: examsToShow.isEmpty ? Colors.grey : primaryColor, 
+                size: 24
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    examsToShow.isEmpty ? 'No Exams' : title,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  if (examsToShow.isEmpty)
+                    Text(
+                      'No exams scheduled',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    )
+                  else if (examsToShow.length == 1)
+                    _buildSingleExamInfo(examsToShow[0], primaryColor)
+                  else
+                    _buildScrollableExamInfo(examsToShow, primaryColor),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSingleExamInfo(
-      Map<String, dynamic> exam, Color primaryColor) {
+  Widget _buildSingleExamInfo(Map<String, dynamic> exam, Color primaryColor) {
     final examDate = DateTime.parse(exam['exam_date']);
     final dayName = DateFormat('EEEE').format(examDate);
     final formattedDate = DateFormat('MMM dd').format(examDate);
 
     return Column(
-      mainAxisSize: MainAxisSize.min, // ✅ Prevent overflow
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -636,8 +775,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildScrollableExamInfo(
-      List<Map<String, dynamic>> exams, Color primaryColor) {
+  Widget _buildScrollableExamInfo(List<Map<String, dynamic>> exams, Color primaryColor) {
     return Column(
       children: [
         Container(
@@ -705,158 +843,6 @@ class _MyAppState extends State<MyApp> {
                     : primaryColor.withOpacity(0.3),
               ),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget studyMaterialsCard(Color primaryColor) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                SharedAxisTransition(
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.horizontal,
-              child: StudyMaterialPage(),
-            ),
-          ),
-        );
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Icon(Icons.menu_book, color: primaryColor, size: 32),
-              SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Study Materials',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'Access study notes & PDFs',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget facultyCard(Color primaryColor, BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                SharedAxisTransition(
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.horizontal,
-              child: FacultyPage(),
-            ),
-          ),
-        );
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        color: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Icon(Icons.person_outline, color: primaryColor, size: 32),
-              SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Faculty',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'Meet your faculty team',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget quickLinksCard(Color primaryColor) {
-    return Card(
-      color: Colors.white,
-      elevation: 5,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            quickLinkIcon(Icons.assignment, 'Assignments', primaryColor),
-            quickLinkIcon(Icons.bookmark_border, 'Bookmarks', primaryColor),
-            quickLinkIcon(Icons.chat_bubble_outline, 'Chat', primaryColor),
-            quickLinkIcon(Icons.settings_outlined, 'Settings', primaryColor),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget quickLinkIcon(IconData icon, String label, Color color) {
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 28),
-        SizedBox(height: 6),
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
           ),
         ),
       ],
