@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FacultyPage extends StatelessWidget {
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
 
   final List<Map<String, String>> facultyList = [
     {
@@ -37,6 +37,8 @@ class FacultyPage extends StatelessWidget {
     },
   ];
 
+  FacultyPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,28 +54,28 @@ class FacultyPage extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [primaryColor, secondaryColor],
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Column(
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                          child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Text(
                           'Faculty',
@@ -86,9 +88,9 @@ class FacultyPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
@@ -109,7 +111,7 @@ class FacultyPage extends StatelessWidget {
             // Faculty List
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 itemCount: facultyList.length,
                 itemBuilder: (context, index) {
                   final faculty = facultyList[index];
@@ -125,7 +127,7 @@ class FacultyPage extends StatelessWidget {
 
   Widget _buildFacultyCard(Map<String, String> faculty, BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -133,12 +135,12 @@ class FacultyPage extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -154,13 +156,13 @@ class FacultyPage extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.person,
                     color: Colors.white,
                     size: 24,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,9 +175,9 @@ class FacultyPage extends StatelessWidget {
                           color: Colors.grey[800],
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
@@ -194,13 +196,13 @@ class FacultyPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Contact Information
             _buildInfoRow(Icons.phone_outlined, 'Contact', faculty['contact'] ?? ''),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             _buildInfoRow(Icons.schedule_outlined, 'Available', faculty['availability'] ?? ''),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Action Buttons
             Row(
@@ -208,7 +210,7 @@ class FacultyPage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => _showContactDialog(context, faculty),
-                    icon: Icon(Icons.phone, size: 16),
+                    icon: const Icon(Icons.phone, size: 16),
                     label: Text(
                       'Contact',
                       style: GoogleFonts.poppins(
@@ -222,15 +224,15 @@ class FacultyPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => _showScheduleDialog(context, faculty),
-                    icon: Icon(Icons.schedule, size: 16),
+                    icon: const Icon(Icons.schedule, size: 16),
                     label: Text(
                       'Schedule',
                       style: GoogleFonts.poppins(
@@ -244,7 +246,7 @@ class FacultyPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
                 ),
@@ -260,14 +262,14 @@ class FacultyPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, size: 16, color: Colors.grey[600]),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,12 +336,12 @@ class FacultyPage extends StatelessWidget {
                 'Message',
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
-              subtitle: Text('Send SMS'),
+              subtitle: const Text('Send SMS'),
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Opening messages...'),
+                    content: const Text('Opening messages...'),
                     backgroundColor: primaryColor,
                   ),
                 );
@@ -387,7 +389,7 @@ class FacultyPage extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Availability:',
               style: GoogleFonts.poppins(
@@ -396,7 +398,7 @@ class FacultyPage extends StatelessWidget {
                 color: Colors.grey[700],
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               faculty['availability'] ?? '',
               style: GoogleFonts.poppins(

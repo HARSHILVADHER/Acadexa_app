@@ -3,14 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class TimetablePage extends StatefulWidget {
+  const TimetablePage({super.key});
+
   @override
   _TimetablePageState createState() => _TimetablePageState();
 }
 
 class _TimetablePageState extends State<TimetablePage> {
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
 
   DateTime selectedDate = DateTime.now();
 
@@ -71,28 +73,28 @@ class _TimetablePageState extends State<TimetablePage> {
                   end: Alignment.bottomRight,
                   colors: [primaryColor, secondaryColor],
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Column(
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                          child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Text(
                           'Timetable',
@@ -105,9 +107,9 @@ class _TimetablePageState extends State<TimetablePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
@@ -128,10 +130,10 @@ class _TimetablePageState extends State<TimetablePage> {
             // Date Selector
             Container(
               height: 80,
-              margin: EdgeInsets.symmetric(vertical: 20),
+              margin: const EdgeInsets.symmetric(vertical: 20),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 itemCount: days.length,
                 itemBuilder: (context, index) {
                   final date = days[index];
@@ -146,7 +148,7 @@ class _TimetablePageState extends State<TimetablePage> {
                     },
                     child: Container(
                       width: 60,
-                      margin: EdgeInsets.only(right: 12),
+                      margin: const EdgeInsets.only(right: 12),
                       decoration: BoxDecoration(
                         color: isSelected ? primaryColor : Colors.white,
                         borderRadius: BorderRadius.circular(16),
@@ -157,7 +159,7 @@ class _TimetablePageState extends State<TimetablePage> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -172,7 +174,7 @@ class _TimetablePageState extends State<TimetablePage> {
                               color: isSelected ? Colors.white : Colors.grey[600],
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             DateFormat('d').format(date),
                             style: GoogleFonts.poppins(
@@ -185,7 +187,7 @@ class _TimetablePageState extends State<TimetablePage> {
                             Container(
                               width: 6,
                               height: 6,
-                              margin: EdgeInsets.only(top: 4),
+                              margin: const EdgeInsets.only(top: 4),
                               decoration: BoxDecoration(
                                 color: primaryColor,
                                 shape: BoxShape.circle,
@@ -202,7 +204,7 @@ class _TimetablePageState extends State<TimetablePage> {
             // Classes List
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -218,7 +220,7 @@ class _TimetablePageState extends State<TimetablePage> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
@@ -234,7 +236,7 @@ class _TimetablePageState extends State<TimetablePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     
                     Expanded(
                       child: todayClasses.isEmpty
@@ -262,14 +264,14 @@ class _TimetablePageState extends State<TimetablePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(Icons.event_busy, size: 48, color: Colors.grey[400]),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'No Classes Today',
             style: GoogleFonts.poppins(
@@ -278,7 +280,7 @@ class _TimetablePageState extends State<TimetablePage> {
               color: Colors.grey[800],
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Enjoy your free day!',
             style: GoogleFonts.poppins(
@@ -302,7 +304,7 @@ class _TimetablePageState extends State<TimetablePage> {
     final color = colors[index % colors.length];
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -310,12 +312,12 @@ class _TimetablePageState extends State<TimetablePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Row(
           children: [
             // Time indicator
@@ -327,7 +329,7 @@ class _TimetablePageState extends State<TimetablePage> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             
             // Class info
             Expanded(
@@ -346,7 +348,7 @@ class _TimetablePageState extends State<TimetablePage> {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: color.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
@@ -362,11 +364,11 @@ class _TimetablePageState extends State<TimetablePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(Icons.person_outline, size: 16, color: Colors.grey[600]),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         classData['teacher'] ?? '',
                         style: GoogleFonts.poppins(
@@ -377,11 +379,11 @@ class _TimetablePageState extends State<TimetablePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         classData['time'] ?? '',
                         style: GoogleFonts.poppins(

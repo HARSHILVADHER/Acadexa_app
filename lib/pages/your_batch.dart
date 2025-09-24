@@ -3,14 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:acadexa_app_one/services/user_service.dart';
 
 class YourBatchPage extends StatefulWidget {
+  const YourBatchPage({super.key});
+
   @override
   _YourBatchPageState createState() => _YourBatchPageState();
 }
 
 class _YourBatchPageState extends State<YourBatchPage> {
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
   
   String userName = '';
   String greeting = '';
@@ -59,28 +61,28 @@ class _YourBatchPageState extends State<YourBatchPage> {
                   end: Alignment.bottomRight,
                   colors: [primaryColor, secondaryColor],
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 32),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
               child: Column(
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                          child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Text(
                           'Your Batch',
@@ -93,11 +95,11 @@ class _YourBatchPageState extends State<YourBatchPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   
                   // Batch Info Card in Header
                   Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(16),
@@ -105,14 +107,14 @@ class _YourBatchPageState extends State<YourBatchPage> {
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(Icons.groups, color: Colors.white, size: 24),
+                          child: const Icon(Icons.groups, color: Colors.white, size: 24),
                         ),
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +127,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                                   color: Colors.white,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 '$studentCount Students • Year $classYear',
                                 style: GoogleFonts.poppins(
@@ -151,7 +153,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(color: primaryColor),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'Loading batch info...',
                             style: GoogleFonts.poppins(
@@ -163,7 +165,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                       ),
                     )
                   : SingleChildScrollView(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -176,7 +178,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                               _buildInfoTile(Icons.people_outline, 'Total Students', '$studentCount'),
                             ],
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
                           // Next Class
                           _buildInfoSection(
@@ -185,7 +187,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                               _buildNextClassCard(),
                             ],
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
                           // Students List
                           Text(
@@ -196,7 +198,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                               color: Colors.grey[800],
                             ),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           _buildStudentsList(),
                         ],
                       ),
@@ -218,7 +220,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -226,7 +228,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Text(
               title,
               style: GoogleFonts.poppins(
@@ -244,18 +246,18 @@ class _YourBatchPageState extends State<YourBatchPage> {
 
   Widget _buildInfoTile(IconData icon, String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: primaryColor, size: 20),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,7 +270,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: GoogleFonts.poppins(
@@ -287,8 +289,8 @@ class _YourBatchPageState extends State<YourBatchPage> {
 
   Widget _buildNextClassCard() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
@@ -297,14 +299,14 @@ class _YourBatchPageState extends State<YourBatchPage> {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.blue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.schedule, color: Colors.blue, size: 20),
+            child: const Icon(Icons.schedule, color: Colors.blue, size: 20),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +319,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                     color: Colors.grey[800],
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Tomorrow, 3:00 - 4:00 PM',
                   style: GoogleFonts.poppins(
@@ -345,7 +347,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
   Widget _buildStudentsList() {
     if (students.isEmpty) {
       return Container(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -353,7 +355,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -361,14 +363,14 @@ class _YourBatchPageState extends State<YourBatchPage> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(Icons.people_outline, size: 32, color: Colors.grey[400]),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 'No Students Found',
                 style: GoogleFonts.poppins(
@@ -377,7 +379,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                   color: Colors.grey[800],
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Students will appear here once enrolled',
                 style: GoogleFonts.poppins(
@@ -399,16 +401,16 @@ class _YourBatchPageState extends State<YourBatchPage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ListView.separated(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.all(20),
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(20),
         itemCount: students.length,
-        separatorBuilder: (_, __) => Divider(height: 24),
+        separatorBuilder: (_, __) => const Divider(height: 24),
         itemBuilder: (context, index) {
           return Row(
             children: [
@@ -430,7 +432,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                   ),
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   students[index],
@@ -442,7 +444,7 @@ class _YourBatchPageState extends State<YourBatchPage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.green.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),

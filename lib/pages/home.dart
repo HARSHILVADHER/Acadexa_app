@@ -18,16 +18,18 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color accentColor = Color(0xFF3B82F6);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color accentColor = const Color(0xFF3B82F6);
   final Color cardColor = Colors.white;
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
   
   String userName = 'User';
   String greeting = 'Hello';
@@ -36,7 +38,7 @@ class _MyAppState extends State<MyApp> {
   List<Map<String, dynamic>> todayExams = [];
   List<Map<String, dynamic>> upcomingExams = [];
   bool examLoading = true;
-  PageController _examPageController = PageController();
+  final PageController _examPageController = PageController();
   int _currentExamIndex = 0;
 
   @override
@@ -100,285 +102,270 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Modern Header with gradient
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [primaryColor, secondaryColor],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(24),
-                  ),
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Modern Header with gradient
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [primaryColor, secondaryColor],
                 ),
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
-                child: Column(
-                  children: [
-                    // Top row with greeting and icons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '$greeting!',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                userName,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+              child: Column(
+                children: [
+                  // Top row with greeting and icons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
+                            Text(
+                              '$greeting!',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
                               ),
-                              child: Icon(Icons.notifications_none, 
-                                color: Colors.white, size: 20),
                             ),
-                            SizedBox(width: 12),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    transitionDuration: Duration(milliseconds: 500),
-                                    pageBuilder: (context, animation, secondaryAnimation) =>
-                                        SharedAxisTransition(
-                                      animation: animation,
-                                      secondaryAnimation: secondaryAnimation,
-                                      transitionType: SharedAxisTransitionType.horizontal,
-                                      child: ProfilePage(toggleTheme: () {}),
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(Icons.person_outline, 
-                                  color: Colors.white, size: 20),
+                            Text(
+                              userName,
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
                               ),
                             ),
                           ],
                         ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.notifications_none, 
+                              color: Colors.white, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 500),
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                      SharedAxisTransition(
+                                    animation: animation,
+                                    secondaryAnimation: secondaryAnimation,
+                                    transitionType: SharedAxisTransitionType.horizontal,
+                                    child: ProfilePage(toggleTheme: () {}),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.person_outline, 
+                                color: Colors.white, size: 20),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // Date and time
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      DateFormat('EEEE, MMMM d • h:mm a').format(DateTime.now()),
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Quick stats row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            'Attendance',
+                            '$attendancePercentage%',
+                            Icons.check_circle_outline,
+                            attendancePercentage >= 75 ? Colors.green : Colors.orange,
+                            () => Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 500),
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    SharedAxisTransition(
+                                  animation: animation,
+                                  secondaryAnimation: secondaryAnimation,
+                                  transitionType: SharedAxisTransitionType.horizontal,
+                                  child: AttendancePage(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildStatCard(
+                            'Batch',
+                            batchName.isNotEmpty ? batchName : 'Loading...',
+                            Icons.groups_outlined,
+                            accentColor,
+                            () => Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 500),
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    SharedAxisTransition(
+                                  animation: animation,
+                                  secondaryAnimation: secondaryAnimation,
+                                  transitionType: SharedAxisTransitionType.horizontal,
+                                  child: YourBatchPage(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    // Date and time
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
+                    const SizedBox(height: 24),
+                    
+                    // Main features grid
+                    Text(
+                      'Today\'s Overview',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.grey[800],
                       ),
-                      child: Text(
-                        DateFormat('EEEE, MMMM d • h:mm a').format(DateTime.now()),
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Schedule and Exam cards
+                    _buildModernCard(
+                      icon: Icons.schedule,
+                      title: 'Today\'s Schedule',
+                      subtitle: 'Next: Physics, 4:00 to 5:00 PM',
+                      color: primaryColor,
+                      onTap: () => Navigator.of(context).push(
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 500),
+                          pageBuilder: (context, animation, secondaryAnimation) =>
+                              SharedAxisTransition(
+                            animation: animation,
+                            secondaryAnimation: secondaryAnimation,
+                            transitionType: SharedAxisTransitionType.horizontal,
+                            child: TimetablePage(),
+                          ),
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    
+                    examCard(primaryColor, context),
+                    const SizedBox(height: 24),
+                    
+                    // Services section
+                    Text(
+                      'Academic Services',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Services grid
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1.2,
+                      children: [
+                        _buildServiceCard(
+                          icon: Icons.menu_book,
+                          title: 'Study Materials',
+                          subtitle: 'Notes & Resources',
+                          color: Colors.purple,
+                          onTap: () => Navigator.of(context).push(
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 500),
+                              pageBuilder: (context, animation, secondaryAnimation) =>
+                                  SharedAxisTransition(
+                                animation: animation,
+                                secondaryAnimation: secondaryAnimation,
+                                transitionType: SharedAxisTransitionType.horizontal,
+                                child: StudyMaterialPage(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        _buildServiceCard(
+                          icon: Icons.people,
+                          title: 'Faculty',
+                          subtitle: 'Meet Your Teachers',
+                          color: Colors.teal,
+                          onTap: () => Navigator.of(context).push(
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 500),
+                              pageBuilder: (context, animation, secondaryAnimation) =>
+                                  SharedAxisTransition(
+                                animation: animation,
+                                secondaryAnimation: secondaryAnimation,
+                                transitionType: SharedAxisTransitionType.horizontal,
+                                child: FacultyPage(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 80), // Extra space for bottom nav
                   ],
                 ),
               ),
-              
-              // Scrollable content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Quick stats row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildStatCard(
-                              'Attendance',
-                              '${attendancePercentage}%',
-                              Icons.check_circle_outline,
-                              attendancePercentage >= 75 ? Colors.green : Colors.orange,
-                              () => Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  transitionDuration: Duration(milliseconds: 500),
-                                  pageBuilder: (context, animation, secondaryAnimation) =>
-                                      SharedAxisTransition(
-                                    animation: animation,
-                                    secondaryAnimation: secondaryAnimation,
-                                    transitionType: SharedAxisTransitionType.horizontal,
-                                    child: AttendancePage(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: _buildStatCard(
-                              'Batch',
-                              batchName.isNotEmpty ? batchName : 'Loading...',
-                              Icons.groups_outlined,
-                              accentColor,
-                              () => Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  transitionDuration: Duration(milliseconds: 500),
-                                  pageBuilder: (context, animation, secondaryAnimation) =>
-                                      SharedAxisTransition(
-                                    animation: animation,
-                                    secondaryAnimation: secondaryAnimation,
-                                    transitionType: SharedAxisTransitionType.horizontal,
-                                    child: YourBatchPage(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 24),
-                      
-                      // Main features grid
-                      Text(
-                        'Today\'s Overview',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      
-                      // Schedule and Exam cards
-                      _buildModernCard(
-                        icon: Icons.schedule,
-                        title: 'Today\'s Schedule',
-                        subtitle: 'Next: Physics, 4:00 to 5:00 PM',
-                        color: primaryColor,
-                        onTap: () => Navigator.of(context).push(
-                          PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
-                            pageBuilder: (context, animation, secondaryAnimation) =>
-                                SharedAxisTransition(
-                              animation: animation,
-                              secondaryAnimation: secondaryAnimation,
-                              transitionType: SharedAxisTransitionType.horizontal,
-                              child: TimetablePage(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      
-                      examCard(primaryColor, context),
-                      SizedBox(height: 24),
-                      
-                      // Services section
-                      Text(
-                        'Academic Services',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      
-                      // Services grid
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 1.2,
-                        children: [
-                          _buildServiceCard(
-                            icon: Icons.menu_book,
-                            title: 'Study Materials',
-                            subtitle: 'Notes & Resources',
-                            color: Colors.purple,
-                            onTap: () => Navigator.of(context).push(
-                              PageRouteBuilder(
-                                transitionDuration: Duration(milliseconds: 500),
-                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                    SharedAxisTransition(
-                                  animation: animation,
-                                  secondaryAnimation: secondaryAnimation,
-                                  transitionType: SharedAxisTransitionType.horizontal,
-                                  child: StudyMaterialPage(),
-                                ),
-                              ),
-                            ),
-                          ),
-                          _buildServiceCard(
-                            icon: Icons.people,
-                            title: 'Faculty',
-                            subtitle: 'Meet Your Teachers',
-                            color: Colors.teal,
-                            onTap: () => Navigator.of(context).push(
-                              PageRouteBuilder(
-                                transitionDuration: Duration(milliseconds: 500),
-                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                    SharedAxisTransition(
-                                  animation: animation,
-                                  secondaryAnimation: secondaryAnimation,
-                                  transitionType: SharedAxisTransitionType.horizontal,
-                                  child: FacultyPage(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 24),
-                      
-                      // Quick actions
-                      Text(
-                        'Quick Actions',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      _buildQuickActionsRow(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -388,7 +375,7 @@ class _MyAppState extends State<MyApp> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -396,7 +383,7 @@ class _MyAppState extends State<MyApp> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -404,14 +391,14 @@ class _MyAppState extends State<MyApp> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               value,
               style: GoogleFonts.poppins(
@@ -443,7 +430,7 @@ class _MyAppState extends State<MyApp> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -451,21 +438,21 @@ class _MyAppState extends State<MyApp> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,7 +465,7 @@ class _MyAppState extends State<MyApp> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: GoogleFonts.poppins(
@@ -506,7 +493,7 @@ class _MyAppState extends State<MyApp> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -514,7 +501,7 @@ class _MyAppState extends State<MyApp> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -522,14 +509,14 @@ class _MyAppState extends State<MyApp> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               title,
               style: GoogleFonts.poppins(
@@ -538,7 +525,7 @@ class _MyAppState extends State<MyApp> {
                 color: Colors.grey[800],
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: GoogleFonts.poppins(
@@ -552,60 +539,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildQuickActionsRow() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildQuickAction(Icons.assignment, 'Assignments', Colors.orange),
-          _buildQuickAction(Icons.bookmark_border, 'Bookmarks', Colors.blue),
-          _buildQuickAction(Icons.chat_bubble_outline, 'Chat', Colors.green),
-          _buildQuickAction(Icons.settings_outlined, 'Settings', Colors.grey),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildQuickAction(IconData icon, String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        SizedBox(height: 8),
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget examCard(Color primaryColor, BuildContext context) {
     if (examLoading) {
       return Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -613,21 +552,21 @@ class _MyAppState extends State<MyApp> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(Icons.assignment_turned_in, color: primaryColor, size: 24),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -640,7 +579,7 @@ class _MyAppState extends State<MyApp> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   SizedBox(
                     height: 2,
                     child: LinearProgressIndicator(
@@ -664,7 +603,7 @@ class _MyAppState extends State<MyApp> {
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
+            transitionDuration: const Duration(milliseconds: 500),
             pageBuilder: (context, animation, secondaryAnimation) =>
                 SharedAxisTransition(
               animation: animation,
@@ -676,7 +615,7 @@ class _MyAppState extends State<MyApp> {
         );
       },
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -684,14 +623,14 @@ class _MyAppState extends State<MyApp> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: examsToShow.isEmpty ? Colors.grey.withOpacity(0.1) : primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -702,7 +641,7 @@ class _MyAppState extends State<MyApp> {
                 size: 24
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -715,7 +654,7 @@ class _MyAppState extends State<MyApp> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   if (examsToShow.isEmpty)
                     Text(
                       'No exams scheduled',
@@ -755,7 +694,7 @@ class _MyAppState extends State<MyApp> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           '$dayName, $formattedDate',
           style: GoogleFonts.poppins(
@@ -778,7 +717,7 @@ class _MyAppState extends State<MyApp> {
   Widget _buildScrollableExamInfo(List<Map<String, dynamic>> exams, Color primaryColor) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: 70,
           child: PageView.builder(
             controller: _examPageController,
@@ -806,7 +745,7 @@ class _MyAppState extends State<MyApp> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     '$dayName, $formattedDate',
                     style: GoogleFonts.poppins(
@@ -827,13 +766,13 @@ class _MyAppState extends State<MyApp> {
             },
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             exams.length,
             (index) => Container(
-              margin: EdgeInsets.symmetric(horizontal: 2),
+              margin: const EdgeInsets.symmetric(horizontal: 2),
               width: 6,
               height: 6,
               decoration: BoxDecoration(

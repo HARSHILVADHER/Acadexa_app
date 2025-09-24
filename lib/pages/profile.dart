@@ -7,16 +7,16 @@ import '../services/temp_storage.dart';
 import 'email.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key, required Null Function() toggleTheme}) : super(key: key);
+  const ProfilePage({super.key, required Null Function() toggleTheme});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
 
   Map<String, dynamic>? studentData;
   bool isLoading = true;
@@ -61,26 +61,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     end: Alignment.bottomRight,
                     colors: [primaryColor, secondaryColor],
                   ),
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(24),
                     bottomRight: Radius.circular(24),
                   ),
                 ),
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
                 child: Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                        child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         'Profile',
@@ -100,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(color: primaryColor),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
                         'Loading profile...',
                         style: GoogleFonts.poppins(
@@ -131,29 +131,29 @@ class _ProfilePageState extends State<ProfilePage> {
                   end: Alignment.bottomRight,
                   colors: [primaryColor, secondaryColor],
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 32),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
               child: Column(
                 children: [
                   // Top row with back button and title
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                          child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Text(
                           'Profile',
@@ -166,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   
                   // Profile Avatar and Info
                   Container(
@@ -177,13 +177,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 3),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.person,
                       size: 40,
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     studentData?['name'] ?? 'User',
                     style: GoogleFonts.poppins(
@@ -192,9 +192,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(16),
@@ -215,7 +215,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Content
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     // Personal Information
@@ -228,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         _buildAddressTile(),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     // Actions Section
                     _buildInfoSection(
@@ -248,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     // Settings Section
                     _buildInfoSection(
@@ -289,7 +289,7 @@ class _ProfilePageState extends State<ProfilePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -297,7 +297,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Text(
               title,
               style: GoogleFonts.poppins(
@@ -315,18 +315,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildInfoTile(IconData icon, String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: primaryColor, size: 20),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,7 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: GoogleFonts.poppins(
@@ -358,18 +358,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildAddressTile() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(Icons.location_on_outlined, color: primaryColor, size: 20),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +382,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   studentData?['address'] ?? 'No address added',
                   style: GoogleFonts.poppins(
@@ -395,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
@@ -414,8 +414,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        padding: EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isDestructive ? Colors.red.withOpacity(0.05) : Colors.grey[50],
           borderRadius: BorderRadius.circular(12),
@@ -423,7 +423,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isDestructive 
                     ? Colors.red.withOpacity(0.1) 
@@ -436,7 +436,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 size: 20,
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,7 +449,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
                     style: GoogleFonts.poppins(

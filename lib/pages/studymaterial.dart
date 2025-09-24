@@ -4,14 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/study_material_service.dart';
 
 class StudyMaterialPage extends StatefulWidget {
+  const StudyMaterialPage({super.key});
+
   @override
   _StudyMaterialPageState createState() => _StudyMaterialPageState();
 }
 
 class _StudyMaterialPageState extends State<StudyMaterialPage> {
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
   
   String selectedType = 'notes';
   Map<String, dynamic> materials = {};
@@ -136,26 +138,26 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                   end: Alignment.bottomRight,
                   colors: [primaryColor, secondaryColor],
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       'Study Materials',
@@ -172,8 +174,8 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
 
             // Type Selector
             Container(
-              margin: EdgeInsets.all(20),
-              padding: EdgeInsets.all(4),
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -181,7 +183,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -190,7 +192,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                   value: selectedType,
                   isExpanded: true,
                   icon: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Icon(Icons.keyboard_arrow_down, color: primaryColor),
                   ),
                   style: GoogleFonts.poppins(
@@ -210,7 +212,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                     return DropdownMenuItem<String>(
                       value: type['value'],
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Text(type['label']!),
                       ),
                     );
@@ -227,7 +229,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(color: primaryColor),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'Loading materials...',
                             style: GoogleFonts.poppins(
@@ -244,14 +246,14 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Icon(Icons.error_outline, size: 48, color: Colors.red),
+                                child: const Icon(Icons.error_outline, size: 48, color: Colors.red),
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               Text(
                                 'Failed to load materials',
                                 style: GoogleFonts.poppins(
@@ -260,7 +262,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                                   color: Colors.grey[800],
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 errorMessage,
                                 style: GoogleFonts.poppins(
@@ -269,7 +271,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               ElevatedButton(
                                 onPressed: _loadMaterials,
                                 style: ElevatedButton.styleFrom(
@@ -277,7 +279,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 ),
                                 child: Text(
                                   'Retry',
@@ -305,14 +307,14 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(Icons.folder_open, size: 48, color: Colors.grey[400]),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'No materials available',
               style: GoogleFonts.poppins(
@@ -321,7 +323,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Check back later for new content',
               style: GoogleFonts.poppins(
@@ -337,7 +339,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
     final typeMaterials = materials[selectedType] as Map<String, dynamic>;
     
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: typeMaterials.keys.length,
       itemBuilder: (context, index) {
         final subject = typeMaterials.keys.elementAt(index);
@@ -350,7 +352,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
 
   Widget _buildSubjectCard(String subject, List<dynamic> subjectMaterials) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -358,13 +360,13 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ExpansionTile(
         leading: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
@@ -395,14 +397,14 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
 
   Widget _buildMaterialTile(Map<String, dynamic> material) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
         leading: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: _getFileColor(material['file_type']).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
@@ -434,7 +436,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               material['file_name'],
               style: GoogleFonts.poppins(
@@ -445,7 +447,7 @@ class _StudyMaterialPageState extends State<StudyMaterialPage> {
           ],
         ),
         trailing: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),

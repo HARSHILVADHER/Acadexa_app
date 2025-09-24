@@ -5,13 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AttendancePage extends StatefulWidget {
+  const AttendancePage({super.key});
+
   @override
   _AttendancePageState createState() => _AttendancePageState();
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  final Color primaryColor = Color(0xFF645BD6); // Purple theme
-  final Color backgroundColor = Color(0xFFF5F6FA);
+  final Color primaryColor = const Color(0xFF645BD6); // Purple theme
+  final Color backgroundColor = const Color(0xFFF5F6FA);
   final Color cardColor = Colors.white;
   
   Map<String, dynamic>? overallData;
@@ -41,7 +43,7 @@ class _AttendancePageState extends State<AttendancePage> {
     
     try {
       final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      final yesterday = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
+      final yesterday = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 1)));
       
       final results = await Future.wait([
         AttendanceService.getOverallAttendance(),
@@ -87,7 +89,7 @@ class _AttendancePageState extends State<AttendancePage> {
         backgroundColor: primaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -100,22 +102,22 @@ class _AttendancePageState extends State<AttendancePage> {
         ),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: Colors.white))
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : error != null
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline, color: Colors.white, size: 48),
-                      SizedBox(height: 16),
+                      const Icon(Icons.error_outline, color: Colors.white, size: 48),
+                      const SizedBox(height: 16),
                       Text(
                         'Failed to load attendance',
                         style: GoogleFonts.poppins(color: Colors.white, fontSize: 16),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: _loadAllData,
-                        child: Text('Retry'),
+                        child: const Text('Retry'),
                       ),
                     ],
                   ),
@@ -126,24 +128,24 @@ class _AttendancePageState extends State<AttendancePage> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: backgroundColor,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(30),
                             topRight: Radius.circular(30),
                           ),
                         ),
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildAttendanceGraph(),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               _buildTodayYesterdaySection(),
                               if (showCalendar) ...[
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 _buildCalendarSection(),
                               ],
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               _buildSelectedDateAttendance(),
                             ],
                           ),
@@ -161,7 +163,7 @@ class _AttendancePageState extends State<AttendancePage> {
     final totalDays = overallData?['total_days'] ?? 0;
     
     return Container(
-      padding: EdgeInsets.all(18),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -169,7 +171,7 @@ class _AttendancePageState extends State<AttendancePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -201,7 +203,7 @@ class _AttendancePageState extends State<AttendancePage> {
               ),
             ],
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +233,7 @@ class _AttendancePageState extends State<AttendancePage> {
   
   Widget _buildTodayYesterdaySection() {
     return Container(
-      padding: EdgeInsets.all(18),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -239,7 +241,7 @@ class _AttendancePageState extends State<AttendancePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -271,10 +273,10 @@ class _AttendancePageState extends State<AttendancePage> {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildDateRow('Today', DateTime.now(), todayAttendance),
-          SizedBox(height: 12),
-          _buildDateRow('Yesterday', DateTime.now().subtract(Duration(days: 1)), yesterdayAttendance),
+          const SizedBox(height: 12),
+          _buildDateRow('Yesterday', DateTime.now().subtract(const Duration(days: 1)), yesterdayAttendance),
         ],
       ),
     );
@@ -315,7 +317,7 @@ class _AttendancePageState extends State<AttendancePage> {
           ],
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: statusColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
@@ -336,8 +338,8 @@ class _AttendancePageState extends State<AttendancePage> {
   
   Widget _buildCalendarSection() {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      padding: EdgeInsets.all(18),
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -345,7 +347,7 @@ class _AttendancePageState extends State<AttendancePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -360,7 +362,7 @@ class _AttendancePageState extends State<AttendancePage> {
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           TableCalendar(
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
@@ -417,7 +419,7 @@ class _AttendancePageState extends State<AttendancePage> {
     }
     
     return Container(
-      padding: EdgeInsets.all(18),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -425,7 +427,7 @@ class _AttendancePageState extends State<AttendancePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -440,10 +442,10 @@ class _AttendancePageState extends State<AttendancePage> {
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Center(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
                 color: statusColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(25),
@@ -458,7 +460,7 @@ class _AttendancePageState extends State<AttendancePage> {
                     color: statusColor,
                     size: 20,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     status,
                     style: GoogleFonts.poppins(

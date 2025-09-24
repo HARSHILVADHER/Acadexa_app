@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import '../services/exam_service.dart';
 
 class ExamPage extends StatefulWidget {
+  const ExamPage({super.key});
+
   @override
   State<ExamPage> createState() => _ExamPageState();
 }
@@ -11,9 +13,9 @@ class ExamPage extends StatefulWidget {
 class _ExamPageState extends State<ExamPage> {
   int selectedSection = 0;
 
-  final Color primaryColor = Color(0xFF2563EB);
-  final Color secondaryColor = Color(0xFF1E40AF);
-  final Color backgroundColor = Color(0xFFF8FAFC);
+  final Color primaryColor = const Color(0xFF2563EB);
+  final Color secondaryColor = const Color(0xFF1E40AF);
+  final Color backgroundColor = const Color(0xFFF8FAFC);
 
   List<Map<String, dynamic>> upcomingExams = [];
   List<Map<String, dynamic>> todayExams = [];
@@ -64,26 +66,26 @@ class _ExamPageState extends State<ExamPage> {
                   end: Alignment.bottomRight,
                   colors: [primaryColor, secondaryColor],
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       'Exams',
@@ -106,7 +108,7 @@ class _ExamPageState extends State<ExamPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(color: primaryColor),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'Loading exams...',
                             style: GoogleFonts.poppins(
@@ -123,14 +125,14 @@ class _ExamPageState extends State<ExamPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Icon(Icons.error_outline, color: Colors.red, size: 48),
+                                child: const Icon(Icons.error_outline, color: Colors.red, size: 48),
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               Text(
                                 'Failed to load exams',
                                 style: GoogleFonts.poppins(
@@ -139,7 +141,7 @@ class _ExamPageState extends State<ExamPage> {
                                   color: Colors.grey[800],
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 'Please check your connection and try again',
                                 style: GoogleFonts.poppins(
@@ -147,7 +149,7 @@ class _ExamPageState extends State<ExamPage> {
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               ElevatedButton(
                                 onPressed: () {
                                   setState(() {
@@ -161,7 +163,7 @@ class _ExamPageState extends State<ExamPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 ),
                                 child: Text(
                                   'Retry',
@@ -175,12 +177,12 @@ class _ExamPageState extends State<ExamPage> {
                           ),
                         )
                       : Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             children: [
                               // Section Tabs
                               Container(
-                                padding: EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[100],
                                   borderRadius: BorderRadius.circular(12),
@@ -193,7 +195,7 @@ class _ExamPageState extends State<ExamPage> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
 
                               // Content
                               Expanded(
@@ -218,7 +220,7 @@ class _ExamPageState extends State<ExamPage> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
@@ -227,7 +229,7 @@ class _ExamPageState extends State<ExamPage> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ]
               : [],
@@ -270,7 +272,7 @@ class _ExamPageState extends State<ExamPage> {
 
     return ListView.separated(
       itemCount: exams.length,
-      separatorBuilder: (_, __) => SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         return _buildExamCard(exams[index]);
       },
@@ -287,14 +289,14 @@ class _ExamPageState extends State<ExamPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(icon, size: 48, color: Colors.grey[400]),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             title,
             style: GoogleFonts.poppins(
@@ -303,7 +305,7 @@ class _ExamPageState extends State<ExamPage> {
               color: Colors.grey[800],
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             subtitle,
             style: GoogleFonts.poppins(
@@ -326,7 +328,7 @@ class _ExamPageState extends State<ExamPage> {
     return GestureDetector(
       onTap: () => _showExamDetails(exam),
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -334,21 +336,21 @@ class _ExamPageState extends State<ExamPage> {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(Icons.assignment_turned_in, color: primaryColor, size: 24),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,7 +363,7 @@ class _ExamPageState extends State<ExamPage> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     '$dayName, $formattedDate',
                     style: GoogleFonts.poppins(
@@ -436,7 +438,7 @@ class _ExamPageState extends State<ExamPage> {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

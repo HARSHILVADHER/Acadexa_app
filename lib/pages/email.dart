@@ -3,15 +3,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../services/temp_storage.dart';
-import 'home.dart';
+import '../main_wrapper.dart';
 
 class EmailLoginPage extends StatefulWidget {
+  const EmailLoginPage({super.key});
+
   @override
   State<EmailLoginPage> createState() => _EmailLoginPageState();
 }
 
 class _EmailLoginPageState extends State<EmailLoginPage> {
-  final Color primaryColor = Color(0xFF767FE9);
+  final Color primaryColor = const Color(0xFF767FE9);
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _retypeController = TextEditingController();
@@ -99,7 +101,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           });
           // Show success message and navigate
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password set successfully! Please login.')),
+            const SnackBar(content: Text('Password set successfully! Please login.')),
           );
           // Clear password fields
           _passwordController.clear();
@@ -136,7 +138,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           // Navigate to home page
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MyApp()),
+            MaterialPageRoute(builder: (context) => MainWrapper()),
           );
         } else {
           print('Login failed: ${result['error']}');
@@ -163,7 +165,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 // Acadexa logo image
                 Image.asset(
                   'assets/icons/Acadexa.png',
@@ -171,9 +173,9 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                   height: 170,
                   fit: BoxFit.contain,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 // Email entry box
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -199,7 +201,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                                   Icon(Icons.email_outlined, color: primaryColor),
                               suffixIcon: isLoading
                                   ? Padding(
-                                      padding: EdgeInsets.all(12),
+                                      padding: const EdgeInsets.all(12),
                                       child: SizedBox(
                                         width: 20,
                                         height: 20,
@@ -216,14 +218,14 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                               ),
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: EdgeInsets.symmetric(vertical: 18),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 18),
                             ),
                           keyboardType: TextInputType.emailAddress,
                           onChanged: _checkEmail,
                         ),
                       ),
                       if (showPasswordFields) ...[
-                        SizedBox(height: 18),
+                        const SizedBox(height: 18),
                         Material(
                           color: Colors.white,
                           elevation: 3,
@@ -263,13 +265,13 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                               filled: true,
                               fillColor: Colors.white,
                               contentPadding:
-                                  EdgeInsets.symmetric(vertical: 18),
+                                  const EdgeInsets.symmetric(vertical: 18),
                             ),
                             keyboardType: TextInputType.number,
                           ),
                         ),
                         if (!hasPassword) ...[
-                          SizedBox(height: 18),
+                          const SizedBox(height: 18),
                           Material(
                             color: Colors.white,
                             elevation: 3,
@@ -309,14 +311,14 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                               filled: true,
                               fillColor: Colors.white,
                               contentPadding:
-                                  EdgeInsets.symmetric(vertical: 18),
+                                  const EdgeInsets.symmetric(vertical: 18),
                             ),
                             keyboardType: TextInputType.number,
                           ),
                         ),
                         ],
                       ],
-                      SizedBox(height: 18),
+                      const SizedBox(height: 18),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -324,13 +326,13 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
                             elevation: 3,
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: isLoading
-                              ? SizedBox(
+                              ? const SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(
@@ -349,7 +351,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                                 ),
                         ),
                       ),
-                      SizedBox(height: 28),
+                      const SizedBox(height: 28),
                       _signInButton(
                         context,
                         icon: Image.asset(
@@ -361,7 +363,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                         onTap: () {},
                       ),
                       if (errorText.isNotEmpty) ...[
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Text(
                           errorText,
                           style: GoogleFonts.poppins(
@@ -373,7 +375,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 38),
+                const SizedBox(height: 38),
               ],
             ),
           ),
@@ -396,11 +398,11 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
         child: Container(
           height: 52,
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Row(
             children: [
               icon,
-              SizedBox(width: 18),
+              const SizedBox(width: 18),
               Text(
                 text,
                 style: GoogleFonts.poppins(

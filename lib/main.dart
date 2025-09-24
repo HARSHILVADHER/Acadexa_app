@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/home.dart';
+import 'main_wrapper.dart';
 import 'pages/email.dart';
 import 'services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +9,8 @@ void main() {
 }
 
 class AcadexaApp extends StatefulWidget {
+  const AcadexaApp({super.key});
+
   static _AcadexaAppState? of(BuildContext context) =>
       context.findAncestorStateOfType<_AcadexaAppState>();
 
@@ -40,7 +42,7 @@ class _AcadexaAppState extends State<AcadexaApp> {
       themeMode: _themeMode,
       initialRoute: '/email', // Change initial route to email.dart
       routes: {
-        '/home': (context) => MyApp(),
+        '/home': (context) => MainWrapper(),
         '/email': (context) => EmailLoginPage(), // Add email route
       },
     );

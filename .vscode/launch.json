@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter Debug",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": ["--debug"],
+            "env": {
+                "JAVA_HOME": "C:\\Program Files\\Java\\jdk-17"
+            }
+        },
+        {
+            "name": "Flutter Profile",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "profile",
+            "env": {
+                "JAVA_HOME": "C:\\Program Files\\Java\\jdk-17"
+            }
+        },
+        {
+            "name": "Flutter Release",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "env": {
+                "JAVA_HOME": "C:\\Program Files\\Java\\jdk-17"
+            }
+        }
+    ]
+}
